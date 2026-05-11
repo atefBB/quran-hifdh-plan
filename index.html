@@ -4,91 +4,122 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>خطة حفظ القرآن الكريم</title>
-<link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --gold: #c9a84c; --gold-light: #e8c97a; --gold-dark: #8a6a1f;
-    --emerald-dark: #0d3320; --emerald: #1a5c3a; --cream: #faf6ed; --ink: #1a1208;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'Cairo','Amiri',sans-serif; background:var(--emerald-dark); color:var(--cream); min-height:100vh; overflow-x:hidden; }
-  body::before { content:''; position:fixed; inset:0;
-    background: radial-gradient(ellipse 80% 60% at 50% 0%,rgba(201,168,76,.12) 0%,transparent 70%),
-                radial-gradient(ellipse 60% 40% at 20% 100%,rgba(45,138,88,.15) 0%,transparent 60%);
-    pointer-events:none; z-index:0; }
-  .wrap { max-width:960px; margin:0 auto; padding:2rem 1.2rem 4rem; position:relative; z-index:1; }
+:root{--gold:#c9a84c;--gold-light:#e8c97a;--gold-dark:#8a6a1f;--emerald-dark:#0d3320;--emerald:#1a5c3a;--cream:#faf6ed;--ink:#1a1208}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Cairo','Amiri',sans-serif;background:var(--emerald-dark);color:var(--cream);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(201,168,76,.12) 0%,transparent 70%),radial-gradient(ellipse 60% 40% at 20% 100%,rgba(45,138,88,.15) 0%,transparent 60%);pointer-events:none;z-index:0}
+.wrap{max-width:960px;margin:0 auto;padding:2rem 1.2rem 4rem;position:relative;z-index:1}
+.screen{display:none}.screen.active{display:block}
+header{text-align:center;padding:2rem 1rem 1rem}.bismillah{font-family:'Amiri Quran','Amiri',serif;font-size:2rem;color:var(--gold-light);margin-bottom:.6rem;opacity:.9}
+h1{font-family:'Amiri',serif;font-size:clamp(1.6rem,5vw,2.4rem);font-weight:700;color:var(--gold);line-height:1.4;text-shadow:0 2px 12px rgba(201,168,76,.3)}
+.subtitle{font-size:.85rem;color:rgba(232,201,122,.55);margin-top:.3rem}
 
-  /* ── Header ── */
-  header { text-align:center; padding:2.5rem 1rem 1.5rem; }
-  .bismillah { font-family:'Amiri Quran','Amiri',serif; font-size:2rem; color:var(--gold-light); margin-bottom:1rem; opacity:.9; }
-  h1 { font-family:'Amiri',serif; font-size:clamp(1.8rem,5vw,2.7rem); font-weight:700; color:var(--gold); line-height:1.4; text-shadow:0 2px 12px rgba(201,168,76,.3); margin-bottom:.4rem; }
-  .subtitle { font-size:.9rem; color:rgba(232,201,122,.65); }
+/* ── Setup Card ── */
+.setup-card{background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.18);border-radius:18px;padding:1.8rem;margin-top:1.5rem}
+.setup-card h2{font-family:'Amiri',serif;font-size:1.3rem;color:var(--gold-light);margin-bottom:1.2rem;display:flex;align-items:center;gap:.5rem}
+.setup-card h2::before{content:'';width:3px;height:1.2em;background:var(--gold);border-radius:2px}
+.form-row{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.2rem}
+.form-group{flex:1;min-width:180px}
+.form-group label{display:block;font-size:.82rem;color:rgba(232,201,122,.7);margin-bottom:.3rem;font-weight:600}
+.form-group input,.form-group select{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(201,168,76,.25);border-radius:8px;color:var(--cream);font-family:'Cairo',sans-serif;font-size:.9rem;padding:.45rem .7rem;outline:none}
+.form-group input:focus,.form-group select:focus{border-color:var(--gold)}
+.form-group select option{background:var(--emerald-dark);color:var(--cream)}
 
-  /* ── Stats ── */
-  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(155px,1fr)); gap:1rem; margin:2rem 0; }
-  .stat { background:rgba(255,255,255,.04); border:1px solid rgba(201,168,76,.25); border-radius:14px; padding:1.1rem 1rem; text-align:center; transition:.25s; }
-  .stat:hover { border-color:rgba(201,168,76,.55); transform:translateY(-2px); }
-  .stat-icon { font-size:1.5rem; margin-bottom:.3rem; }
-  .stat-val { font-size:1.65rem; font-weight:900; color:var(--gold); line-height:1.1; }
-  .stat-lbl { font-size:.76rem; color:rgba(232,201,122,.6); margin-top:.2rem; line-height:1.4; }
+/* ── Surah Selector ── */
+.sel-section{margin-bottom:1.2rem}
+.sel-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:.5rem}
+.sel-header h3{font-family:'Amiri',serif;font-size:1rem;color:var(--gold-light);font-weight:400}
+.sel-header .hint{font-size:.72rem;color:rgba(232,201,122,.4)}
+.btn-group{display:flex;gap:.4rem}
+.btn-group .btn-sm{background:rgba(255,255,255,.07);border:1px solid rgba(201,168,76,.18);border-radius:6px;color:var(--gold-light);font-family:'Cairo',sans-serif;font-size:.72rem;padding:.2rem .55rem;cursor:pointer;transition:.15s}
+.btn-group .btn-sm:hover{background:rgba(201,168,76,.15);border-color:rgba(201,168,76,.4)}
+.surah-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.35rem;max-height:240px;overflow-y:auto;padding:.2rem;border:1px solid rgba(201,168,76,.08);border-radius:8px;background:rgba(0,0,0,.1)}
+.surah-grid::-webkit-scrollbar{width:5px}
+.surah-grid::-webkit-scrollbar-track{background:rgba(255,255,255,.03);border-radius:3px}
+.surah-grid::-webkit-scrollbar-thumb{background:rgba(201,168,76,.25);border-radius:3px}
+.surah-item{display:flex;align-items:center;gap:.35rem;padding:.25rem .4rem;border-radius:5px;cursor:pointer;transition:.12s;font-size:.78rem;user-select:none}
+.surah-item:hover{background:rgba(201,168,76,.08)}
+.surah-item input[type=checkbox]{accent-color:var(--gold);width:14px;height:14px;cursor:pointer;flex-shrink:0}
+.surah-item .s-num{color:rgba(232,201,122,.35);font-size:.65rem;min-width:20px;text-align:center;flex-shrink:0}
+.surah-item .s-name{color:rgba(232,201,122,.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.surah-item .s-pages{color:rgba(232,201,122,.3);font-size:.62rem;margin-right:auto;flex-shrink:0}
 
-  /* ── Section title ── */
-  .sec { font-family:'Amiri',serif; font-size:1.3rem; color:var(--gold-light); display:flex; align-items:center; gap:.6rem; margin:2.5rem 0 1rem; padding-bottom:.5rem; border-bottom:1px solid rgba(201,168,76,.2); }
-  .sec::before { content:''; width:4px; height:1.35em; background:var(--gold); border-radius:2px; flex-shrink:0; }
+/* ── Summary ── */
+#setup-summary{margin:.8rem 0;padding:.7rem 1rem;background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.15);border-radius:10px;font-size:.82rem;color:rgba(232,201,122,.75);display:none}
+#setup-summary strong{color:var(--gold-light)}
 
-  /* ── Progress ── */
-  .prog-box { background:rgba(255,255,255,.03); border:1px solid rgba(201,168,76,.15); border-radius:16px; padding:1.4rem; margin-bottom:1.5rem; }
-  .prog-track { background:rgba(255,255,255,.07); border-radius:100px; height:10px; overflow:hidden; margin:.5rem 0 .25rem; }
-  .prog-fill { height:100%; border-radius:100px; background:linear-gradient(90deg,var(--gold-dark),var(--gold),var(--gold-light)); transition:width 1s ease; }
-  .prog-ends { display:flex; justify-content:space-between; font-size:.73rem; color:rgba(232,201,122,.45); }
+.btn-primary{display:block;width:100%;background:linear-gradient(135deg,var(--gold-dark),var(--gold));color:var(--ink);border:none;border-radius:10px;padding:.65rem 1rem;font-family:'Cairo',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;transition:.2s;margin-top:.5rem}
+.btn-primary:hover{opacity:.88;transform:translateY(-1px)}
 
-  /* ── Controls ── */
-  .controls { display:flex; align-items:center; gap:.7rem; flex-wrap:wrap; margin-bottom:1rem; }
-  .controls label { font-size:.88rem; color:var(--gold-light); }
-  input[type=number] { background:rgba(255,255,255,.06); border:1px solid rgba(201,168,76,.3); border-radius:8px; color:var(--cream); font-family:'Cairo',sans-serif; font-size:.9rem; padding:.38rem .7rem; width:78px; text-align:center; outline:none; }
-  input[type=number]:focus { border-color:var(--gold); }
-  .btn { background:linear-gradient(135deg,var(--gold-dark),var(--gold)); color:var(--ink); border:none; border-radius:8px; padding:.42rem 1rem; font-family:'Cairo',sans-serif; font-weight:700; font-size:.84rem; cursor:pointer; transition:.2s; }
-  .btn:hover { opacity:.85; transform:translateY(-1px); }
-  .btn-soft { background:rgba(255,255,255,.08); color:var(--gold-light); }
+/* ── Stats ── */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.8rem;margin:1.5rem 0}
+.stat{background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.2);border-radius:14px;padding:1rem;text-align:center;transition:.25s}
+.stat:hover{border-color:rgba(201,168,76,.5);transform:translateY(-2px)}
+.stat-icon{font-size:1.3rem;margin-bottom:.2rem}
+.stat-val{font-size:1.5rem;font-weight:900;color:var(--gold);line-height:1.1}
+.stat-lbl{font-size:.72rem;color:rgba(232,201,122,.55);margin-top:.15rem;line-height:1.4}
 
-  /* ── Week banner ── */
-  .banner { background:rgba(201,168,76,.08); border:1px solid rgba(201,168,76,.2); border-radius:12px; padding:.75rem 1.1rem; margin-bottom:1rem; font-size:.83rem; color:rgba(232,201,122,.8); display:flex; gap:1.2rem; flex-wrap:wrap; }
-  .banner strong { color:var(--gold); }
+/* ── Progress ── */
+.prog-box{background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.12);border-radius:16px;padding:1.2rem;margin-bottom:1.2rem}
+.prog-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem}
+.prog-header span{font-size:.82rem;color:var(--gold-light)}
+.prog-header .pct{font-size:.88rem;color:var(--gold);font-weight:700}
+.prog-track{background:rgba(255,255,255,.07);border-radius:100px;height:10px;overflow:hidden}
+.prog-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--gold-dark),var(--gold),var(--gold-light));transition:width .6s ease}
+.prog-ends{display:flex;justify-content:space-between;font-size:.68rem;color:rgba(232,201,122,.35);margin-top:.2rem}
 
-  /* ── Day cards ── */
-  .days { display:grid; gap:.65rem; }
-  .day { background:rgba(255,255,255,.035); border:1px solid rgba(201,168,76,.14); border-radius:12px; padding:.9rem 1.1rem; display:grid; grid-template-columns:105px 1fr 1fr; align-items:start; gap:.9rem; transition:.2s; }
-  .day:hover { background:rgba(255,255,255,.06); border-color:rgba(201,168,76,.3); }
-  .day.fri { background:rgba(201,168,76,.06); border-color:rgba(201,168,76,.18); grid-template-columns:105px 1fr; }
-  .dname { font-family:'Amiri',serif; font-size:1rem; font-weight:700; color:var(--cream); }
-  .day.fri .dname { color:var(--gold); }
-  .dmeta { font-size:.67rem; color:rgba(255,255,255,.32); margin-top:2px; }
-  .tlbl { font-size:.66rem; font-weight:600; letter-spacing:.04em; text-transform:uppercase; opacity:.48; margin-bottom:.2rem; }
-  .tval { font-size:.83rem; line-height:1.75; }
-  .hv { color:var(--gold-light); font-weight:700; }
-  .mv { color:#7ec8a0; font-weight:700; }
-  .rest-badge { display:inline-block; background:rgba(201,168,76,.06); border:1px solid rgba(201,168,76,.12); border-radius:20px; padding:.13rem .65rem; font-size:.71rem; color:rgba(201,168,76,.55); }
+/* ── Week ── */
+.sec-title{font-family:'Amiri',serif;font-size:1.15rem;color:var(--gold-light);display:flex;align-items:center;gap:.5rem;margin:1.5rem 0 .8rem;padding-bottom:.3rem;border-bottom:1px solid rgba(201,168,76,.15)}
+.sec-title::before{content:'';width:3px;height:1.2em;background:var(--gold);border-radius:2px;flex-shrink:0}
+.week-controls{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.8rem}
+.week-controls label{font-size:.82rem;color:var(--gold-light)}
+.week-controls input{background:rgba(255,255,255,.06);border:1px solid rgba(201,168,76,.25);border-radius:8px;color:var(--cream);font-family:'Cairo',sans-serif;font-size:.85rem;padding:.35rem .6rem;width:65px;text-align:center;outline:none}
+.week-controls input:focus{border-color:var(--gold)}
+.week-btn{background:linear-gradient(135deg,var(--gold-dark),var(--gold));color:var(--ink);border:none;border-radius:7px;padding:.35rem .85rem;font-family:'Cairo',sans-serif;font-weight:700;font-size:.78rem;cursor:pointer;transition:.15s}
+.week-btn:hover{opacity:.85;transform:translateY(-1px)}
+.week-btn-soft{background:rgba(255,255,255,.07);color:var(--gold-light)}
+.banner{background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.16);border-radius:10px;padding:.6rem .9rem;margin-bottom:.8rem;font-size:.8rem;color:rgba(232,201,122,.75);display:flex;gap:1rem;flex-wrap:wrap}
+.banner strong{color:var(--gold)}
+.days{display:grid;gap:.55rem}
+.day{background:rgba(255,255,255,.035);border:1px solid rgba(201,168,76,.12);border-radius:12px;padding:.75rem 1rem;display:grid;grid-template-columns:95px 1fr 1fr;align-items:start;gap:.7rem;transition:.15s}
+.day:hover{background:rgba(255,255,255,.055);border-color:rgba(201,168,76,.25)}
+.day.fri{background:rgba(201,168,76,.05);border-color:rgba(201,168,76,.15);grid-template-columns:95px 1fr}
+.day.past{opacity:.7}
+.day.today{background:rgba(201,168,76,.09);border-color:var(--gold)}
+.dname{font-family:'Amiri',serif;font-size:.95rem;font-weight:700;color:var(--cream)}
+.day.fri .dname{color:var(--gold)}
+.ddate{font-size:.62rem;color:rgba(255,255,255,.28);margin-top:1px}
+.tlbl{font-size:.6rem;font-weight:600;letter-spacing:.03em;text-transform:uppercase;opacity:.45;margin-bottom:.15rem}
+.tval{font-size:.78rem;line-height:1.7}
+.hv{color:var(--gold-light);font-weight:700}
+.mv{color:#7ec8a0;font-weight:700}
+.rest-badge{display:inline-block;background:rgba(201,168,76,.05);border:1px solid rgba(201,168,76,.1);border-radius:20px;padding:.1rem .55rem;font-size:.68rem;color:rgba(201,168,76,.5)}
+.past-badge{display:inline-flex;align-items:center;gap:.25rem;font-size:.6rem;color:rgba(255,255,255,.2);margin-right:.4rem}
 
-  /* ── Surah table ── */
-  .stbl { width:100%; border-collapse:collapse; font-size:.81rem; }
-  .stbl th { font-family:'Amiri',serif; font-size:.87rem; color:var(--gold); padding:.55rem .8rem; text-align:right; border-bottom:1px solid rgba(201,168,76,.2); font-weight:700; }
-  .stbl td { padding:.48rem .8rem; border-bottom:1px solid rgba(255,255,255,.04); color:rgba(232,201,122,.8); }
-  .stbl tr:hover td { background:rgba(255,255,255,.03); }
-  .sn { color:var(--cream) !important; font-family:'Amiri',serif; font-size:.93rem; }
-  .stripe td { background:rgba(201,168,76,.035); }
+/* ── Surah Table ── */
+.stbl{width:100%;border-collapse:collapse;font-size:.76rem;margin-bottom:.5rem}
+.stbl th{font-family:'Amiri',serif;font-size:.82rem;color:var(--gold);padding:.4rem .6rem;text-align:right;border-bottom:1px solid rgba(201,168,76,.18);font-weight:700}
+.stbl td{padding:.38rem .6rem;border-bottom:1px solid rgba(255,255,255,.03);color:rgba(232,201,122,.75)}
+.stbl tr:hover td{background:rgba(255,255,255,.03)}
+.sn{color:var(--cream)!important;font-family:'Amiri',serif;font-size:.85rem}
+.stripe td{background:rgba(201,168,76,.03)}
 
-  /* ── Tips ── */
-  .tips { display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:.8rem; margin-top:.5rem; }
-  .tip { background:rgba(255,255,255,.03); border:1px solid rgba(201,168,76,.12); border-radius:12px; padding:.95rem; font-size:.81rem; color:rgba(232,201,122,.74); line-height:1.6; }
-  .tip strong { display:block; color:var(--gold-light); margin-bottom:.28rem; font-size:.87rem; }
+/* ── Actions ── */
+.actions{display:flex;gap:.6rem;margin-top:1.5rem;flex-wrap:wrap}
+.actions button{background:rgba(255,255,255,.06);border:1px solid rgba(201,168,76,.18);border-radius:8px;color:var(--gold-light);font-family:'Cairo',sans-serif;font-size:.8rem;padding:.4rem .9rem;cursor:pointer;transition:.15s}
+.actions button:hover{background:rgba(201,168,76,.12);border-color:rgba(201,168,76,.35)}
+.actions .btn-danger{color:#e87461;border-color:rgba(232,116,97,.25)}
 
-  footer { text-align:center; margin-top:3rem; padding-top:1.4rem; border-top:1px solid rgba(201,168,76,.1); font-size:.77rem; color:rgba(201,168,76,.32); font-family:'Amiri',serif; }
+footer{text-align:center;margin-top:2rem;padding-top:1.2rem;border-top:1px solid rgba(201,168,76,.08);font-size:.72rem;color:rgba(201,168,76,.25);font-family:'Amiri',serif}
 
-  @media(max-width:580px){
-    .day { grid-template-columns:1fr; gap:.45rem; }
-    .day.fri { grid-template-columns:1fr; }
-    .stats { grid-template-columns:repeat(2,1fr); }
-  }
+@media(max-width:580px){
+.day{grid-template-columns:1fr;gap:.35rem;padding:.65rem .75rem}
+.day.fri{grid-template-columns:1fr}
+.stats{grid-template-columns:repeat(2,1fr)}
+.surah-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr))}
+}
 </style>
 </head>
 <body>
@@ -97,380 +128,501 @@
 <header>
   <div class="bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
   <h1>خطة حفظ القرآن الكريم</h1>
-  <div class="subtitle">حفظ: الإسراء ← البقرة &nbsp;|&nbsp; مراجعة: الكهف ← الناس &nbsp;|&nbsp; صفحة حفظ + صفحتان مراجعة يومياً &nbsp;|&nbsp; الجمعة راحة</div>
+  <div class="subtitle">خطة شخصية للحفظ والمراجعة اليومية</div>
 </header>
 
-<div class="stats">
-  <div class="stat"><div class="stat-icon">📖</div><div class="stat-val">280</div><div class="stat-lbl">صفحة للحفظ<br>الإسراء (ص282) ← البقرة (ص2)</div></div>
-  <div class="stat"><div class="stat-icon">🔄</div><div class="stat-val">2</div><div class="stat-lbl">صفحتا مراجعة يومياً<br>الكهف ← الناس (312 ص)</div></div>
-  <div class="stat"><div class="stat-icon">📅</div><div class="stat-val">47</div><div class="stat-lbl">أسبوعاً تقريباً<br>~11 شهراً</div></div>
-  <div class="stat"><div class="stat-icon">🕌</div><div class="stat-val">6</div><div class="stat-lbl">أيام حفظ أسبوعياً<br>الجمعة راحة ودعاء</div></div>
-</div>
+<!-- ════════ SETUP SCREEN ════════ -->
+<div id="screen-setup" class="screen active">
+  <div class="setup-card">
+    <h2>إعداد الخطة</h2>
 
-<!-- Progress -->
-<div class="prog-box">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.7rem;">
-    <span style="font-size:.88rem;color:var(--gold-light);">تتبّع التقدم</span>
-    <span id="pct-label" style="font-size:.9rem;color:var(--gold);font-weight:700;">0%</span>
+    <div class="form-row">
+      <div class="form-group">
+        <label>📅 تاريخ البدء</label>
+        <input type="date" id="start-date">
+      </div>
+      <div class="form-group">
+        <label>🧭 اتجاه الحفظ</label>
+        <select id="direction">
+          <option value="forward">من الفاتحة ← الناس</option>
+          <option value="backward">من الناس ← الفاتحة</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="sel-section">
+      <div class="sel-header">
+        <h3>✅ السور التي حفظتها بالفعل</h3>
+        <div class="btn-group">
+          <button class="btn-sm" onclick="toggleAll('memorized',true)">اختر الكل</button>
+          <button class="btn-sm" onclick="toggleAll('memorized',false)">ألغ الكل</button>
+        </div>
+      </div>
+      <div class="surah-grid" id="memorized-grid"></div>
+    </div>
+
+    <div class="sel-section">
+      <div class="sel-header">
+        <h3>🔄 السور التي تريد مراجعتها يومياً</h3>
+        <span class="hint">تتكرر صفحاتها في الخطة</span>
+        <div class="btn-group">
+          <button class="btn-sm" onclick="toggleAll('revision',true)">اختر الكل</button>
+          <button class="btn-sm" onclick="toggleAll('revision',false)">ألغ الكل</button>
+        </div>
+      </div>
+      <div class="surah-grid" id="revision-grid"></div>
+    </div>
+
+    <div id="setup-summary"></div>
+    <button class="btn-primary" onclick="generatePlan()">⚡ إنشاء الخطة</button>
   </div>
-  <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
-  <div class="prog-ends"><span>الإسراء — ص282</span><span>البقرة — ص2</span></div>
-  <div style="margin-top:1rem;display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;">
-    <label style="font-size:.81rem;color:rgba(232,201,122,.58);">آخر صفحة حفظتها:</label>
-    <input type="number" id="cur-page" value="282" min="2" max="282">
-    <button class="btn" onclick="updateProgress()">تحديث</button>
+  <footer>اللَّهُمَّ اجْعَلِ الْقُرْآنَ رَبِيعَ قُلُوبِنَا</footer>
+</div>
+
+<!-- ════════ PLAN SCREEN ════════ -->
+<div id="screen-plan" class="screen">
+  <div class="stats" id="plan-stats"></div>
+
+  <div class="prog-box">
+    <div class="prog-header">
+      <span>📊 تقدم الحفظ</span>
+      <span class="pct" id="pct-label">0%</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="prog-ends"><span id="prog-start-label"></span><span id="prog-end-label"></span></div>
   </div>
+
+  <div class="sec-title">الخطة التفصيلية</div>
+  <div class="week-controls">
+    <label>الأسبوع:</label>
+    <input type="number" id="week-in" value="1" min="1">
+    <button class="week-btn" onclick="renderWeek()">عرض</button>
+    <button class="week-btn week-btn-soft" onclick="chWeek(-1)">◄ السابق</button>
+    <button class="week-btn week-btn-soft" onclick="chWeek(1)">التالي ►</button>
+  </div>
+  <div class="banner" id="banner"></div>
+  <div class="days" id="days"></div>
+
+  <div class="sec-title">سور الحفظ – مرجع الصفحات</div>
+  <table class="stbl"><thead><tr><th>#</th><th>السورة</th><th>تبدأ من ص</th><th>الصفحات</th></tr></thead><tbody id="hifz-tbl"></tbody></table>
+
+  <div class="sec-title">سور المراجعة – مرجع الصفحات</div>
+  <table class="stbl"><thead><tr><th>#</th><th>السورة</th><th>تبدأ من ص</th><th>الصفحات</th></tr></thead><tbody id="rev-tbl"></tbody></table>
+
+  <div class="actions">
+    <button onclick="showSetup()">✏️ تعديل الخطة</button>
+    <button class="btn-danger" onclick="resetAll()">🗑️ حذف البيانات</button>
+  </div>
+  <footer>اللَّهُمَّ اجْعَلِ الْقُرْآنَ رَبِيعَ قُلُوبِنَا وَنُورَ صُدُورِنَا</footer>
 </div>
 
-<!-- Week viewer -->
-<div class="sec">الخطة الأسبوعية التفصيلية</div>
-<div class="controls">
-  <label>الأسبوع:</label>
-  <input type="number" id="week-in" value="1" min="1" max="47">
-  <button class="btn" onclick="renderWeek()">عرض</button>
-  <button class="btn btn-soft" onclick="chWeek(-1)">◄ السابق</button>
-  <button class="btn btn-soft" onclick="chWeek(1)">التالي ►</button>
-</div>
-<div class="banner" id="banner"></div>
-<div class="days" id="days"></div>
-
-<!-- Surah table – hifz -->
-<div class="sec">سور الحفظ – مرجع الصفحات</div>
-<table class="stbl">
-  <thead><tr><th>#</th><th>السورة</th><th>تبدأ من ص</th><th>الصفحات</th><th>الأسبوع المتوقع</th></tr></thead>
-  <tbody id="htbl"></tbody>
-</table>
-
-<!-- Surah table – muraja'a -->
-<div class="sec">سور المراجعة – مرجع الصفحات</div>
-<table class="stbl">
-  <thead><tr><th>#</th><th>السورة</th><th>تبدأ من ص</th><th>الصفحات</th></tr></thead>
-  <tbody id="mtbl"></tbody>
-</table>
-
-<div class="sec">وصايا وتوجيهات</div>
-<div class="tips">
-  <div class="tip"><strong>🌅 وقت الحفظ</strong>الصفحة الجديدة مباشرة بعد الفجر — أقوى أوقات الذاكرة وأثبتها.</div>
-  <div class="tip"><strong>🔄 المراجعة اليومية</strong>صفحتان من الكهف←الناس بعد العصر أو المغرب. الدورة الكاملة كل ~26 أسبوعاً.</div>
-  <div class="tip"><strong>🎯 قاعدة التثبيت</strong>لا تنتقل للصفحة التالية إلا بعد تلاوة الحالية غيباً 10 مرات متتاليات.</div>
-  <div class="tip"><strong>📿 يوم الجمعة</strong>استمع فقط — اقرأ حفظ الأسبوع الستة (6 صفحات) في جلسة هادئة واحدة.</div>
-  <div class="tip"><strong>👂 الاستماع المصاحب</strong>استمع لتلاوة ما تحفظه قبل النوم (المنشاوي أو الحصري ترتيلاً).</div>
-  <div class="tip"><strong>📊 نهاية كل سورة</strong>عند إكمال سورة: اقرأها كاملة في ركعة واحدة تثبيتاً لها.</div>
-</div>
-
-<footer>اللَّهُمَّ اجْعَلِ الْقُرْآنَ رَبِيعَ قُلُوبِنَا وَنُورَ صُدُورِنَا وَجَلَاءَ أَحْزَانِنَا</footer>
 </div>
 
 <script>
-// ══════════════════════════════════════════════
-//  SURAHS FOR HIFZ  (Isra=17 down to Baqara=2)
-//  Each entry: surah number, name, FIRST page, page count
-//  Order: as they appear going from p282 DOWN to p2
-// ══════════════════════════════════════════════
-const HIFZ_SURAHS = [
-  // Hifz order: Isra first, then going backwards through Quran
-  { num:17,  name:"الإسراء",   start:282, pages:11 },
-  { num:16,  name:"النحل",     start:267, pages:14 },
-  { num:15,  name:"الحجر",     start:262, pages:6  },
-  { num:14,  name:"إبراهيم",   start:255, pages:7  },
-  { num:13,  name:"الرعد",     start:249, pages:6  },
-  { num:12,  name:"يوسف",      start:234, pages:11 }, // wait — order below
-  { num:11,  name:"هود",       start:221, pages:10 },
-  { num:10,  name:"يونس",      start:208, pages:11 },
-  { num:9,   name:"التوبة",    start:187, pages:20 },
-  { num:8,   name:"الأنفال",   start:177, pages:10 },
-  { num:7,   name:"الأعراف",   start:151, pages:24 },
-  { num:6,   name:"الأنعام",   start:128, pages:22 },
-  { num:5,   name:"المائدة",   start:106, pages:22 },
-  { num:4,   name:"النساء",    start:77,  pages:29 },
-  { num:3,   name:"آل عمران",  start:50,  pages:27 },
-  { num:2,   name:"البقرة",    start:2,   pages:48 },
+// ═══════════════════════════════════════════════
+//  SURAH DATA (114 surahs, standard Madani Mushaf)
+// ═══════════════════════════════════════════════
+const ALL_SURAHS = [
+  {num:1,name:"الفاتحة",start:1,pages:1},
+  {num:2,name:"البقرة",start:2,pages:48},
+  {num:3,name:"آل عمران",start:50,pages:27},
+  {num:4,name:"النساء",start:77,pages:29},
+  {num:5,name:"المائدة",start:106,pages:22},
+  {num:6,name:"الأنعام",start:128,pages:22},
+  {num:7,name:"الأعراف",start:151,pages:24},
+  {num:8,name:"الأنفال",start:177,pages:10},
+  {num:9,name:"التوبة",start:187,pages:20},
+  {num:10,name:"يونس",start:208,pages:11},
+  {num:11,name:"هود",start:221,pages:10},
+  {num:12,name:"يوسف",start:234,pages:11},
+  {num:13,name:"الرعد",start:249,pages:6},
+  {num:14,name:"إبراهيم",start:255,pages:7},
+  {num:15,name:"الحجر",start:262,pages:6},
+  {num:16,name:"النحل",start:267,pages:14},
+  {num:17,name:"الإسراء",start:282,pages:11},
+  {num:18,name:"الكهف",start:293,pages:12},
+  {num:19,name:"مريم",start:305,pages:8},
+  {num:20,name:"طه",start:312,pages:10},
+  {num:21,name:"الأنبياء",start:322,pages:11},
+  {num:22,name:"الحج",start:333,pages:10},
+  {num:23,name:"المؤمنون",start:342,pages:10},
+  {num:24,name:"النور",start:350,pages:11},
+  {num:25,name:"الفرقان",start:359,pages:7},
+  {num:26,name:"الشعراء",start:367,pages:11},
+  {num:27,name:"النمل",start:377,pages:10},
+  {num:28,name:"القصص",start:385,pages:11},
+  {num:29,name:"العنكبوت",start:396,pages:9},
+  {num:30,name:"الروم",start:404,pages:7},
+  {num:31,name:"لقمان",start:411,pages:4},
+  {num:32,name:"السجدة",start:415,pages:3},
+  {num:33,name:"الأحزاب",start:418,pages:9},
+  {num:34,name:"سبأ",start:428,pages:6},
+  {num:35,name:"فاطر",start:434,pages:6},
+  {num:36,name:"يس",start:440,pages:6},
+  {num:37,name:"الصافات",start:446,pages:7},
+  {num:38,name:"ص",start:453,pages:5},
+  {num:39,name:"الزمر",start:458,pages:9},
+  {num:40,name:"غافر",start:467,pages:9},
+  {num:41,name:"فصلت",start:477,pages:6},
+  {num:42,name:"الشورى",start:483,pages:7},
+  {num:43,name:"الزخرف",start:489,pages:7},
+  {num:44,name:"الدخان",start:496,pages:3},
+  {num:45,name:"الجاثية",start:499,pages:4},
+  {num:46,name:"الأحقاف",start:502,pages:5},
+  {num:47,name:"محمد",start:507,pages:4},
+  {num:48,name:"الفتح",start:511,pages:5},
+  {num:49,name:"الحجرات",start:515,pages:3},
+  {num:50,name:"ق",start:518,pages:3},
+  {num:51,name:"الذاريات",start:520,pages:3},
+  {num:52,name:"الطور",start:523,pages:3},
+  {num:53,name:"النجم",start:526,pages:3},
+  {num:54,name:"القمر",start:528,pages:3},
+  {num:55,name:"الرحمن",start:531,pages:4},
+  {num:56,name:"الواقعة",start:534,pages:4},
+  {num:57,name:"الحديد",start:537,pages:5},
+  {num:58,name:"المجادلة",start:542,pages:4},
+  {num:59,name:"الحشر",start:545,pages:4},
+  {num:60,name:"الممتحنة",start:549,pages:3},
+  {num:61,name:"الصف",start:551,pages:2},
+  {num:62,name:"الجمعة",start:553,pages:2},
+  {num:63,name:"المنافقون",start:554,pages:2},
+  {num:64,name:"التغابن",start:556,pages:2},
+  {num:65,name:"الطلاق",start:558,pages:2},
+  {num:66,name:"التحريم",start:560,pages:2},
+  {num:67,name:"الملك",start:562,pages:3},
+  {num:68,name:"القلم",start:564,pages:3},
+  {num:69,name:"الحاقة",start:566,pages:2},
+  {num:70,name:"المعارج",start:568,pages:2},
+  {num:71,name:"نوح",start:570,pages:2},
+  {num:72,name:"الجن",start:572,pages:2},
+  {num:73,name:"المزمل",start:574,pages:2},
+  {num:74,name:"المدثر",start:575,pages:2},
+  {num:75,name:"القيامة",start:577,pages:2},
+  {num:76,name:"الإنسان",start:578,pages:2},
+  {num:77,name:"المرسلات",start:580,pages:2},
+  {num:78,name:"النبأ",start:582,pages:2},
+  {num:79,name:"النازعات",start:583,pages:2},
+  {num:80,name:"عبس",start:585,pages:1},
+  {num:81,name:"التكوير",start:586,pages:1},
+  {num:82,name:"الانفطار",start:587,pages:1},
+  {num:83,name:"المطففين",start:587,pages:2},
+  {num:84,name:"الانشقاق",start:589,pages:1},
+  {num:85,name:"البروج",start:590,pages:1},
+  {num:86,name:"الطارق",start:591,pages:1},
+  {num:87,name:"الأعلى",start:591,pages:1},
+  {num:88,name:"الغاشية",start:592,pages:1},
+  {num:89,name:"الفجر",start:593,pages:2},
+  {num:90,name:"البلد",start:594,pages:1},
+  {num:91,name:"الشمس",start:595,pages:1},
+  {num:92,name:"الليل",start:595,pages:1},
+  {num:93,name:"الضحى",start:596,pages:1},
+  {num:94,name:"الشرح",start:596,pages:1},
+  {num:95,name:"التين",start:597,pages:1},
+  {num:96,name:"العلق",start:597,pages:1},
+  {num:97,name:"القدر",start:598,pages:1},
+  {num:98,name:"البينة",start:598,pages:1},
+  {num:99,name:"الزلزلة",start:599,pages:1},
+  {num:100,name:"العاديات",start:599,pages:1},
+  {num:101,name:"القارعة",start:600,pages:1},
+  {num:102,name:"التكاثر",start:600,pages:1},
+  {num:103,name:"العصر",start:601,pages:1},
+  {num:104,name:"الهمزة",start:601,pages:1},
+  {num:105,name:"الفيل",start:601,pages:1},
+  {num:106,name:"قريش",start:602,pages:1},
+  {num:107,name:"الماعون",start:602,pages:1},
+  {num:108,name:"الكوثر",start:602,pages:1},
+  {num:109,name:"الكافرون",start:603,pages:1},
+  {num:110,name:"النصر",start:603,pages:1},
+  {num:111,name:"المسد",start:603,pages:1},
+  {num:112,name:"الإخلاص",start:604,pages:1},
+  {num:113,name:"الفلق",start:604,pages:1},
+  {num:114,name:"الناس",start:604,pages:1}
 ];
 
-// ══════════════════════════════════════════════
-//  SURAHS FOR MURAJA'A (Kahf=18 to Nas=114)
-// ══════════════════════════════════════════════
-const MURAJA_SURAHS = [
-  { num:18,  name:"الكهف",     start:293, pages:12 },
-  { num:19,  name:"مريم",      start:305, pages:8  },
-  { num:20,  name:"طه",        start:312, pages:10 },
-  { num:21,  name:"الأنبياء",  start:322, pages:11 },
-  { num:22,  name:"الحج",      start:333, pages:10 },
-  { num:23,  name:"المؤمنون",  start:342, pages:10 },
-  { num:24,  name:"النور",     start:350, pages:11 },
-  { num:25,  name:"الفرقان",   start:359, pages:7  },
-  { num:26,  name:"الشعراء",   start:367, pages:11 },
-  { num:27,  name:"النمل",     start:377, pages:10 },
-  { num:28,  name:"القصص",     start:385, pages:11 },
-  { num:29,  name:"العنكبوت",  start:396, pages:9  },
-  { num:30,  name:"الروم",     start:404, pages:7  },
-  { num:31,  name:"لقمان",     start:411, pages:4  },
-  { num:32,  name:"السجدة",    start:415, pages:3  },
-  { num:33,  name:"الأحزاب",   start:418, pages:9  },
-  { num:34,  name:"سبأ",       start:428, pages:6  },
-  { num:35,  name:"فاطر",      start:434, pages:6  },
-  { num:36,  name:"يس",        start:440, pages:6  },
-  { num:37,  name:"الصافات",   start:446, pages:7  },
-  { num:38,  name:"ص",         start:453, pages:5  },
-  { num:39,  name:"الزمر",     start:458, pages:9  },
-  { num:40,  name:"غافر",      start:467, pages:9  },
-  { num:41,  name:"فصلت",      start:477, pages:6  },
-  { num:42,  name:"الشورى",    start:483, pages:7  },
-  { num:43,  name:"الزخرف",    start:489, pages:7  },
-  { num:44,  name:"الدخان",    start:496, pages:3  },
-  { num:45,  name:"الجاثية",   start:499, pages:4  },
-  { num:46,  name:"الأحقاف",   start:502, pages:5  },
-  { num:47,  name:"محمد",      start:507, pages:4  },
-  { num:48,  name:"الفتح",     start:511, pages:5  },
-  { num:49,  name:"الحجرات",   start:515, pages:3  },
-  { num:50,  name:"ق",         start:518, pages:3  },
-  { num:51,  name:"الذاريات",  start:520, pages:3  },
-  { num:52,  name:"الطور",     start:523, pages:3  },
-  { num:53,  name:"النجم",     start:526, pages:3  },
-  { num:54,  name:"القمر",     start:528, pages:3  },
-  { num:55,  name:"الرحمن",    start:531, pages:4  },
-  { num:56,  name:"الواقعة",   start:534, pages:4  },
-  { num:57,  name:"الحديد",    start:537, pages:5  },
-  { num:58,  name:"المجادلة",  start:542, pages:4  },
-  { num:59,  name:"الحشر",     start:545, pages:4  },
-  { num:60,  name:"الممتحنة",  start:549, pages:3  },
-  { num:61,  name:"الصف",      start:551, pages:2  },
-  { num:62,  name:"الجمعة",    start:553, pages:2  },
-  { num:63,  name:"المنافقون", start:554, pages:2  },
-  { num:64,  name:"التغابن",   start:556, pages:2  },
-  { num:65,  name:"الطلاق",    start:558, pages:2  },
-  { num:66,  name:"التحريم",   start:560, pages:2  },
-  { num:67,  name:"الملك",     start:562, pages:3  },
-  { num:68,  name:"القلم",     start:564, pages:3  },
-  { num:69,  name:"الحاقة",    start:566, pages:2  },
-  { num:70,  name:"المعارج",   start:568, pages:2  },
-  { num:71,  name:"نوح",       start:570, pages:2  },
-  { num:72,  name:"الجن",      start:572, pages:2  },
-  { num:73,  name:"المزمل",    start:574, pages:2  },
-  { num:74,  name:"المدثر",    start:575, pages:2  },
-  { num:75,  name:"القيامة",   start:577, pages:2  },
-  { num:76,  name:"الإنسان",   start:578, pages:2  },
-  { num:77,  name:"المرسلات",  start:580, pages:2  },
-  { num:78,  name:"النبأ",     start:582, pages:2  },
-  { num:79,  name:"النازعات",  start:583, pages:2  },
-  { num:80,  name:"عبس",       start:585, pages:1  },
-  { num:81,  name:"التكوير",   start:586, pages:1  },
-  { num:82,  name:"الانفطار",  start:587, pages:1  },
-  { num:83,  name:"المطففين",  start:587, pages:2  },
-  { num:84,  name:"الانشقاق",  start:589, pages:1  },
-  { num:85,  name:"البروج",    start:590, pages:1  },
-  { num:86,  name:"الطارق",    start:591, pages:1  },
-  { num:87,  name:"الأعلى",    start:591, pages:1  },
-  { num:88,  name:"الغاشية",   start:592, pages:1  },
-  { num:89,  name:"الفجر",     start:593, pages:2  },
-  { num:90,  name:"البلد",     start:594, pages:1  },
-  { num:91,  name:"الشمس",     start:595, pages:1  },
-  { num:92,  name:"الليل",     start:595, pages:1  },
-  { num:93,  name:"الضحى",     start:596, pages:1  },
-  { num:94,  name:"الشرح",     start:596, pages:1  },
-  { num:95,  name:"التين",     start:597, pages:1  },
-  { num:96,  name:"العلق",     start:597, pages:1  },
-  { num:97,  name:"القدر",     start:598, pages:1  },
-  { num:98,  name:"البينة",    start:598, pages:1  },
-  { num:99,  name:"الزلزلة",   start:599, pages:1  },
-  { num:100, name:"العاديات",  start:599, pages:1  },
-  { num:101, name:"القارعة",   start:600, pages:1  },
-  { num:102, name:"التكاثر",   start:600, pages:1  },
-  { num:103, name:"العصر",     start:601, pages:1  },
-  { num:104, name:"الهمزة",    start:601, pages:1  },
-  { num:105, name:"الفيل",     start:601, pages:1  },
-  { num:106, name:"قريش",      start:602, pages:1  },
-  { num:107, name:"الماعون",   start:602, pages:1  },
-  { num:108, name:"الكوثر",    start:602, pages:1  },
-  { num:109, name:"الكافرون",  start:603, pages:1  },
-  { num:110, name:"النصر",     start:603, pages:1  },
-  { num:111, name:"المسد",     start:603, pages:1  },
-  { num:112, name:"الإخلاص",   start:604, pages:1  },
-  { num:113, name:"الفلق",     start:604, pages:1  },
-  { num:114, name:"الناس",     start:604, pages:1  },
-];
-
-// ══════════════════════════════════════════════
-//  BUILD HIFZ PAGE SEQUENCE  (p282 downward)
-//  Isra: 282,283,...,292  (11 pages)
-//  Then Nahl: 267,...,280 (14 pages) etc.
-//  i.e. for each surah: start, start+1, ... start+pages-1
-// ══════════════════════════════════════════════
-const HIFZ_SEQUENCE = []; // array of {page, surahName, surahNum}
-for (const s of HIFZ_SURAHS) {
-  for (let p = s.start; p < s.start + s.pages; p++) {
-    HIFZ_SEQUENCE.push({ page: p, surah: s.name, surahNum: s.num });
-  }
-}
-// Total should be 280
-const TOTAL_HIFZ = HIFZ_SEQUENCE.length; // 280
-const TOTAL_WEEKS = Math.ceil(TOTAL_HIFZ / 6); // 47
-
-// ══════════════════════════════════════════════
-//  BUILD MURAJA'A PAGE SEQUENCE (p293 → p604, cycling)
-// ══════════════════════════════════════════════
-const MURAJA_SEQUENCE = [];
-for (const s of MURAJA_SURAHS) {
-  for (let p = s.start; p < s.start + s.pages; p++) {
-    MURAJA_SEQUENCE.push({ page: p, surah: s.name });
-  }
-}
-const MURAJA_TOTAL = MURAJA_SEQUENCE.length; // 312
-
-function getMurajaEntry(idx) {
-  return MURAJA_SEQUENCE[idx % MURAJA_TOTAL];
-}
-
-// ══════════════════════════════════════════════
-//  DAY NAMES
-// ══════════════════════════════════════════════
 const DAY_NAMES = ["السبت","الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة"];
 
-// ══════════════════════════════════════════════
-//  RENDER WEEK
-// ══════════════════════════════════════════════
-function renderWeek() {
-  const week = Math.max(1, Math.min(TOTAL_WEEKS, parseInt(document.getElementById('week-in').value) || 1));
-  document.getElementById('week-in').value = week;
+// ═══════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════
+function toDateStr(d){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+dd}
 
-  // Index of first hifz page this week (0-based in HIFZ_SEQUENCE)
-  const hifzIdx0 = (week - 1) * 6;
-  // Index of first muraja'a page this week (0-based, cycling)
-  const murajaIdx0 = (week - 1) * 12;
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+let state = {
+  memorized: new Set(),
+  revision: new Set(),
+  startDate: null,
+  direction: 'forward'
+};
 
-  // Banner info
-  const firstH = HIFZ_SEQUENCE[hifzIdx0] || null;
-  const lastH  = HIFZ_SEQUENCE[Math.min(hifzIdx0 + 5, TOTAL_HIFZ - 1)] || firstH;
-  const firstM = getMurajaEntry(murajaIdx0);
-
-  document.getElementById('banner').innerHTML = `
-    <span>📅 <strong>الأسبوع ${week} / ${TOTAL_WEEKS}</strong></span>
-    ${firstH ? `<span>📖 حفظ: <strong>${firstH.surah}</strong> ص${firstH.page}–${lastH.page}</span>` : '<span>🎉 اكتمل الحفظ</span>'}
-    <span>🔄 مراجعة تبدأ: <strong>${firstM.surah}</strong> ص${firstM.page}</span>`;
-
-  const grid = document.getElementById('days');
-  grid.innerHTML = '';
-
-  let hIdx = hifzIdx0;
-  let mIdx = murajaIdx0;
-
-  for (let d = 0; d < 7; d++) {
-    const card = document.createElement('div');
-    const isFri = (d === 6);
-
-    if (isFri) {
-      card.className = 'day fri';
-      card.innerHTML = `
-        <div><div class="dname">الجمعة</div><div class="dmeta">يوم الراحة</div></div>
-        <div>
-          <span class="rest-badge">🕌 راحة — استماع وتلاوة بلا حفظ جديد</span>
-          <div style="font-size:.74rem;color:rgba(201,168,76,.42);margin-top:.45rem">
-            اقرأ حفظ الأسبوع (6 صفحات) كاملاً في جلسة واحدة هادئة
-          </div>
-        </div>`;
-    } else {
-      card.className = 'day';
-
-      // ── Hifz (1 page) ──
-      const hEntry = HIFZ_SEQUENCE[hIdx] || null;
-      const hHtml = hEntry
-        ? `<span class="hv">ص ${hEntry.page}</span>
-           <span style="font-size:.77rem;color:rgba(232,201,122,.55)"> · ${hEntry.surah}</span>`
-        : `<span style="opacity:.38;font-size:.8rem">اكتمل الحفظ بحمد الله 🎉</span>`;
-
-      // ── Muraja'a (2 pages) ──
-      const m1 = getMurajaEntry(mIdx);
-      const m2 = getMurajaEntry(mIdx + 1);
-      const mHtml = `
-        <div><span class="mv">ص ${m1.page}</span>
-          <span style="font-size:.75rem;color:rgba(126,200,160,.6)"> · ${m1.surah}</span></div>
-        <div><span class="mv">ص ${m2.page}</span>
-          <span style="font-size:.75rem;color:rgba(126,200,160,.6)"> · ${m2.surah}</span></div>`;
-
-      card.innerHTML = `
-        <div>
-          <div class="dname">${DAY_NAMES[d]}</div>
-          <div class="dmeta">اليوم ${d + 1}</div>
-        </div>
-        <div>
-          <div class="tlbl">حفظ جديد 📖</div>
-          <div class="tval">${hHtml}</div>
-        </div>
-        <div>
-          <div class="tlbl">مراجعة 🔄</div>
-          <div class="tval">${mHtml}</div>
-        </div>`;
-
-      if (hEntry) hIdx++;
-      mIdx += 2;
-    }
-    grid.appendChild(card);
-  }
+function saveState(){
+  const d = {memorized:[...state.memorized],revision:[...state.revision],startDate:state.startDate,direction:state.direction};
+  try{localStorage.setItem('hifdh-plan',JSON.stringify(d))}catch(e){}
 }
 
-function chWeek(d) {
-  const inp = document.getElementById('week-in');
-  inp.value = Math.max(1, Math.min(TOTAL_WEEKS, (parseInt(inp.value) || 1) + d));
-  renderWeek();
+function loadState(){
+  try{
+    const raw=localStorage.getItem('hifdh-plan');
+    if(raw){const d=JSON.parse(raw);state.memorized=new Set(d.memorized);state.revision=new Set(d.revision);state.startDate=d.startDate;state.direction=d.direction||'forward'}
+  }catch(e){}
 }
 
-// ══════════════════════════════════════════════
-//  PROGRESS  (hifz pages 282→2, going down means
-//  "done" = how far from p282 into the sequence)
-// ══════════════════════════════════════════════
-function updateProgress() {
-  // User enters the last page number they memorized.
-  // Page numbers go UP from 282 (within Isra), then jump down to 267 (Nahl), etc.
-  // So we track by sequence index instead.
-  // Simpler UX: ask which week they are on, or ask index.
-  // We'll keep page input but map to sequence.
-  const pg = parseInt(document.getElementById('cur-page').value) || 282;
-  // Find index of this page in HIFZ_SEQUENCE
-  let idx = HIFZ_SEQUENCE.findIndex(e => e.page === pg && e.surahNum !== undefined);
-  if (idx < 0) idx = 0;
-  const pct = Math.round((idx / TOTAL_HIFZ) * 100);
-  document.getElementById('prog-fill').style.width = pct + '%';
-  document.getElementById('pct-label').textContent = pct + '%';
+function resetAll(){
+  if(!confirm('سيتم حذف جميع البيانات. هل أنت متأكد؟'))return;
+  localStorage.removeItem('hifdh-plan');
+  state={memorized:new Set(),revision:new Set(),startDate:null,direction:'forward'};
+  initSetup();
 }
 
-// ══════════════════════════════════════════════
-//  SURAH TABLES
-// ══════════════════════════════════════════════
-function renderHifzTable() {
-  let pagesSoFar = 0;
-  document.getElementById('htbl').innerHTML = HIFZ_SURAHS.map((s, i) => {
-    const weekStart = Math.floor(pagesSoFar / 6) + 1;
-    const weekEnd   = Math.floor((pagesSoFar + s.pages - 1) / 6) + 1;
-    pagesSoFar += s.pages;
-    const wStr = weekStart === weekEnd ? `الأسبوع ${weekStart}` : `${weekStart}–${weekEnd}`;
-    return `<tr class="${i%2===0?'stripe':''}">
-      <td>${s.num}</td>
-      <td class="sn">${s.name}</td>
-      <td>ص ${s.start}</td>
-      <td>${s.pages} صفحة</td>
-      <td>${wStr}</td>
-    </tr>`;
+// ═══════════════════════════════════════════════
+//  SETUP RENDERING
+// ═══════════════════════════════════════════════
+function renderSurahGrid(containerId, type){
+  const grid=document.getElementById(containerId);
+  grid.innerHTML=ALL_SURAHS.map(s=>{
+    const checked=type==='memorized'?state.memorized.has(s.num):state.revision.has(s.num);
+    return `<label class="surah-item"><input type="checkbox" ${checked?'checked':''} data-num="${s.num}" data-type="${type}" onchange="toggleSurah(this)"><span class="s-num">${s.num}</span><span class="s-name">${s.name}</span><span class="s-pages">${s.pages}ص</span></label>`
   }).join('');
 }
 
-function renderMurajaTable() {
-  document.getElementById('mtbl').innerHTML = MURAJA_SURAHS.map((s, i) =>
-    `<tr class="${i%2===0?'stripe':''}">
-      <td>${s.num}</td>
-      <td class="sn">${s.name}</td>
-      <td>ص ${s.start}</td>
-      <td>${s.pages} صفحة</td>
-    </tr>`
+function toggleSurah(el){
+  const num=parseInt(el.dataset.num),type=el.dataset.type;
+  if(type==='memorized'){if(el.checked)state.memorized.add(num);else state.memorized.delete(num)}
+  else{if(el.checked)state.revision.add(num);else state.revision.delete(num)}
+  saveState();updateSummary();
+}
+
+function toggleAll(type,on){
+  const target=type==='memorized'?state.memorized:state.revision;
+  ALL_SURAHS.forEach(s=>{if(on)target.add(s.num);else target.delete(s.num)});
+  renderSurahGrid(type==='memorized'?'memorized-grid':'revision-grid',type);
+  saveState();updateSummary();
+}
+
+function updateSummary(){
+  const toMem=ALL_SURAHS.filter(s=>!state.memorized.has(s.num));
+  const memPages=toMem.reduce((a,s)=>a+s.pages,0);
+  const revPages=ALL_SURAHS.filter(s=>state.revision.has(s.num)).reduce((a,s)=>a+s.pages,0);
+  const weeks=Math.ceil(memPages/6);
+  const el=document.getElementById('setup-summary');
+  if(!state.startDate||memPages===0){el.style.display='none';return}
+  el.style.display='block';
+  el.innerHTML=`
+    <div>📖 <strong>${memPages}</strong> صفحة للحفظ <span style="opacity:.5">(${toMem.length} سورة)</span></div>
+    <div>🔄 <strong>${revPages}</strong> صفحة للمراجعة <span style="opacity:.5">(${ALL_SURAHS.filter(s=>state.revision.has(s.num)).length} سورة)</span></div>
+    <div>📅 المدة المتوقعة: <strong>~${weeks} أسبوعاً</strong> (${Math.ceil(weeks/4.33)} شهراً)</div>
+  `;
+}
+
+// ═══════════════════════════════════════════════
+//  SETUP
+// ═══════════════════════════════════════════════
+function initSetup(){
+  loadState();
+  const sd=document.getElementById('start-date');
+  sd.value=state.startDate||toDateStr(new Date());
+  sd.onchange=function(){state.startDate=this.value;saveState();updateSummary()};
+  state.startDate=sd.value;
+  document.getElementById('direction').value=state.direction;
+  renderSurahGrid('memorized-grid','memorized');
+  renderSurahGrid('revision-grid','revision');
+  updateSummary();
+  if(state.memorized.size>0||state.revision.size>0){
+    document.getElementById('screen-setup').classList.remove('active');
+    document.getElementById('screen-plan').classList.add('active');
+    renderPlan();
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  PLAN GENERATION
+// ═══════════════════════════════════════════════
+function generatePlan(){
+  state.startDate=document.getElementById('start-date').value;
+  state.direction=document.getElementById('direction').value;
+  saveState();
+  document.getElementById('screen-setup').classList.remove('active');
+  document.getElementById('screen-plan').classList.add('active');
+  renderPlan();
+}
+
+function showSetup(){
+  renderSurahGrid('memorized-grid','memorized');
+  renderSurahGrid('revision-grid','revision');
+  document.getElementById('start-date').value=state.startDate;
+  document.getElementById('direction').value=state.direction;
+  updateSummary();
+  document.getElementById('screen-plan').classList.remove('active');
+  document.getElementById('screen-setup').classList.add('active');
+}
+
+// ═══════════════════════════════════════════════
+//  BUILD QUEUES
+// ═══════════════════════════════════════════════
+function buildMemQueue(){
+  const surahs=state.direction==='forward'
+    ?ALL_SURAHS.filter(s=>!state.memorized.has(s.num))
+    :[...ALL_SURAHS].filter(s=>!state.memorized.has(s.num)).reverse();
+  const q=[];
+  for(const s of surahs)
+    for(let p=s.start;p<s.start+s.pages;p++)
+      q.push({page:p,surah:s.name,surahNum:s.num});
+  return q;
+}
+
+function buildRevQueue(){
+  const surahs=ALL_SURAHS.filter(s=>state.revision.has(s.num));
+  const q=[];
+  for(const s of surahs)
+    for(let p=s.start;p<s.start+s.pages;p++)
+      q.push({page:p,surah:s.name,surahNum:s.num});
+  return q;
+}
+
+// ═══════════════════════════════════════════════
+//  RENDER PLAN
+// ═══════════════════════════════════════════════
+let planData={days:[],memQueue:[],revQueue:[],totalWeeks:1};
+
+function generateDays(){
+  const memQueue=buildMemQueue();
+  const revQueue=buildRevQueue();
+  const days=[];
+  let memIdx=0,revIdx=0;
+  const start=new Date(state.startDate+'T12:00:00');
+  const todayStr=toDateStr(new Date());
+  while(memIdx<memQueue.length){
+    const d=new Date(start);d.setDate(d.getDate()+days.length);
+    const jsDay=d.getDay();
+    const isFri=jsDay===5;
+    const dateStr=toDateStr(d);
+    const customIdx=(jsDay+1)%7;
+    const isToday=dateStr===todayStr;
+    const isPast=dateStr<todayStr;
+    if(isFri){
+      days.push({date:dateStr,dayName:'الجمعة',dayIndex:customIdx,isFri:true,isToday,isPast,mem:null,rev:[]});
+    }else{
+      const m=memIdx<memQueue.length?memQueue[memIdx]:null;
+      const r1=revQueue.length?revQueue[revIdx%revQueue.length]:null;
+      const r2=revQueue.length?revQueue[(revIdx+1)%revQueue.length]:null;
+      days.push({date:dateStr,dayName:DAY_NAMES[customIdx],dayIndex:customIdx,isFri:false,isToday,isPast,mem:m,rev:[r1,r2].filter(Boolean)});
+      memIdx++;
+      revIdx+=2;
+    }
+  }
+  return {days,memQueue,revQueue,totalWeeks:Math.ceil(memQueue.length/6)};
+}
+
+// ── Stats ──
+function renderStats(pd){
+  const totalMem=pd.memQueue.length;
+  const totalRev=pd.revQueue.length;
+  const weeks=pd.totalWeeks;
+  document.getElementById('plan-stats').innerHTML=`
+    <div class="stat"><div class="stat-icon">📖</div><div class="stat-val">${totalMem}</div><div class="stat-lbl">صفحة للحفظ</div></div>
+    <div class="stat"><div class="stat-icon">🔄</div><div class="stat-val">${totalRev}</div><div class="stat-lbl">صفحة للمراجعة</div></div>
+    <div class="stat"><div class="stat-icon">📅</div><div class="stat-val">${weeks}</div><div class="stat-lbl">أسبوعاً</div></div>
+    <div class="stat"><div class="stat-icon">📆</div><div class="stat-val">${Math.ceil(weeks/4.33)}</div><div class="stat-lbl">شهراً تقريباً</div></div>
+  `;
+}
+
+// ── Progress ──
+function updateProgress(pd){
+  const todayStr=toDateStr(new Date());
+  let done=0;
+  for(const d of pd.days)if(!d.isFri&&d.date<=todayStr)done++;
+  const total=pd.memQueue.length;
+  const pct=total?Math.min(100,Math.round((done/total)*100)):0;
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('pct-label').textContent=pct+'%';
+  document.getElementById('prog-start-label').textContent=state.direction==='forward'?'الفاتحة — ص1':'الناس — ص604';
+  document.getElementById('prog-end-label').textContent=state.direction==='forward'?'الناس — ص604':'الفاتحة — ص1';
+}
+
+// ── Tables ──
+function renderTables(){
+  const toMem=state.direction==='forward'
+    ?ALL_SURAHS.filter(s=>!state.memorized.has(s.num))
+    :[...ALL_SURAHS].filter(s=>!state.memorized.has(s.num)).reverse();
+  document.getElementById('hifz-tbl').innerHTML=toMem.map((s,i)=>
+    `<tr class="${i%2===0?'stripe':''}"><td>${s.num}</td><td class="sn">${s.name}</td><td>ص ${s.start}</td><td>${s.pages}</td></tr>`
+  ).join('');
+  const rev=ALL_SURAHS.filter(s=>state.revision.has(s.num));
+  document.getElementById('rev-tbl').innerHTML=rev.map((s,i)=>
+    `<tr class="${i%2===0?'stripe':''}"><td>${s.num}</td><td class="sn">${s.name}</td><td>ص ${s.start}</td><td>${s.pages}</td></tr>`
   ).join('');
 }
 
-// ══════════════════════════════════════════════
+// ── Week ──
+function renderWeek(){
+  const pd=planData;
+  if(!pd.days.length)return;
+  const week=Math.max(1,Math.min(pd.totalWeeks,parseInt(document.getElementById('week-in').value)||1));
+  document.getElementById('week-in').value=week;
+  const dayIdx0=(week-1)*7;
+  const weekDays=pd.days.slice(dayIdx0,dayIdx0+7);
+  if(!weekDays.length)return;
+
+  const first=weekDays.find(d=>d.mem);
+  const last=[...weekDays].reverse().find(d=>d.mem);
+  const revFirst=pd.revQueue.length?pd.revQueue[((week-1)*12)%pd.revQueue.length]:null;
+  document.getElementById('banner').innerHTML=`
+    <span>📅 <strong>الأسبوع ${week} / ${pd.totalWeeks}</strong></span>
+    ${first?`<span>📖 حفظ: <strong>${first.mem.surah}</strong> ص${first.mem.page}${last&&last!==first?`–${last.mem.page}`:''}</span>`:'<span>🎉 اكتمل الحفظ</span>'}
+    ${revFirst?`<span>🔄 مراجعة: <strong>${revFirst.surah}</strong> ص${revFirst.page}</span>`:''}
+  `;
+
+  const grid=document.getElementById('days');
+  grid.innerHTML='';
+  for(const d of weekDays){
+    const card=document.createElement('div');
+    if(d.isFri){
+      card.className='day fri'+(d.isToday?' today':'')+(d.isPast?' past':'');
+      card.innerHTML=`
+        <div><div class="dname">الجمعة</div><div class="ddate">${d.date}</div></div>
+        <div><span class="rest-badge">🕌 راحة — استماع وتلاوة بلا حفظ جديد</span></div>`;
+    }else{
+      card.className='day'+(d.isToday?' today':'')+(d.isPast?' past':'');
+      const hHtml=d.mem
+        ?`<span class="hv">ص ${d.mem.page}</span><span style="font-size:.72rem;color:rgba(232,201,122,.5)"> · ${d.mem.surah}</span>`
+        :`<span style="opacity:.38;font-size:.75rem">اكتمل الحفظ 🎉</span>`;
+      const mHtml=d.rev.map(r=>`<div><span class="mv">ص ${r.page}</span><span style="font-size:.7rem;color:rgba(126,200,160,.55)"> · ${r.surah}</span></div>`).join('');
+      const todayTag=d.isToday?' <span class="past-badge">← اليوم</span>':'';
+      const pastTag=d.isPast&&!d.isToday?' <span class="past-badge">✓</span>':'';
+      card.innerHTML=`
+        <div><div class="dname">${d.dayName}${todayTag}${pastTag}</div><div class="ddate">${d.date}</div></div>
+        <div><div class="tlbl">حفظ جديد 📖</div><div class="tval">${hHtml}</div></div>
+        <div><div class="tlbl">مراجعة 🔄</div><div class="tval">${mHtml}</div></div>`;
+    }
+    grid.appendChild(card);
+  }
+  updateProgress(pd);
+}
+
+function chWeek(d){
+  const inp=document.getElementById('week-in');
+  inp.value=Math.max(1,Math.min(planData.totalWeeks,(parseInt(inp.value)||1)+d));
+  renderWeek();
+}
+
+// ═══════════════════════════════════════════════
+//  FULL PLAN RENDER
+// ═══════════════════════════════════════════════
+function renderPlan(){
+  planData=generateDays();
+  const w=document.getElementById('week-in');
+  w.value=1;w.max=planData.totalWeeks;
+  renderStats(planData);
+  updateProgress(planData);
+  renderTables();
+  renderWeek();
+}
+
+// ═══════════════════════════════════════════════
 //  INIT
-// ══════════════════════════════════════════════
-renderWeek();
-updateProgress();
-renderHifzTable();
-renderMurajaTable();
+// ═══════════════════════════════════════════════
+initSetup();
 </script>
 </body>
 </html>
