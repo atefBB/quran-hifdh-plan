@@ -39,4 +39,4 @@ Click **"تعديل الخطة"** (Edit Plan) at any time to update your selecti
 
 ## License
 
-MIT
+وقف لله تعالى
