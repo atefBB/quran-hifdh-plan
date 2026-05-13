@@ -174,7 +174,10 @@ footer{text-align:center;margin-top:2rem;padding-top:1.2rem;border-top:1px solid
     </div>
 
     <div id="setup-summary"></div>
-    <button class="btn-primary" onclick="generatePlan()">⚡ إنشاء الخطة</button>
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+      <button class="btn-primary" style="flex:1" onclick="generatePlan()">⚡ إنشاء الخطة</button>
+      <button class="btn-primary" style="flex:1;background:rgba(255,255,255,.07);color:var(--gold-light);border:1px solid rgba(201,168,76,.25)" onclick="document.getElementById('import-input').click()">📤 استيراد من JSON</button>
+    </div>
   </div>
   <footer>اللَّهُمَّ اجْعَلِ الْقُرْآنَ رَبِيعَ قُلُوبِنَا</footer>
 </div>
@@ -211,12 +214,16 @@ footer{text-align:center;margin-top:2rem;padding-top:1.2rem;border-top:1px solid
 
   <div class="actions">
     <button onclick="showSetup()">✏️ تعديل الخطة</button>
+    <button onclick="exportPlan()">📥 تصدير كـ JSON</button>
+    <button onclick="document.getElementById('import-input').click()">📤 استيراد من JSON</button>
     <button class="btn-danger" onclick="resetAll()">🗑️ حذف البيانات</button>
   </div>
   <footer>اللَّهُمَّ اجْعَلِ الْقُرْآنَ رَبِيعَ قُلُوبِنَا وَنُورَ صُدُورِنَا</footer>
 </div>
 
 </div>
+
+<input type="file" id="import-input" accept=".json" style="display:none" onchange="handleImport(event)">
 
 <script>
 // ═══════════════════════════════════════════════
@@ -353,25 +360,26 @@ let state = {
   memorized: new Set(),
   revision: new Set(),
   startDate: null,
-  direction: 'forward'
+  direction: 'forward',
+  skippedDates: new Set()
 };
 
 function saveState(){
-  const d = {memorized:[...state.memorized],revision:[...state.revision],startDate:state.startDate,direction:state.direction};
+  const d = {memorized:[...state.memorized],revision:[...state.revision],startDate:state.startDate,direction:state.direction,skippedDates:[...state.skippedDates]};
   try{localStorage.setItem('hifdh-plan',JSON.stringify(d))}catch(e){}
 }
 
 function loadState(){
   try{
     const raw=localStorage.getItem('hifdh-plan');
-    if(raw){const d=JSON.parse(raw);state.memorized=new Set(d.memorized);state.revision=new Set(d.revision);state.startDate=d.startDate;state.direction=d.direction||'forward'}
+    if(raw){const d=JSON.parse(raw);state.memorized=new Set(d.memorized);state.revision=new Set(d.revision);state.startDate=d.startDate;state.direction=d.direction||'forward';state.skippedDates=new Set(d.skippedDates||[])}
   }catch(e){}
 }
 
 function resetAll(){
   if(!confirm('سيتم حذف جميع البيانات. هل أنت متأكد؟'))return;
   localStorage.removeItem('hifdh-plan');
-  state={memorized:new Set(),revision:new Set(),startDate:null,direction:'forward'};
+  state={memorized:new Set(),revision:new Set(),startDate:null,direction:'forward',skippedDates:new Set()};
   initSetup();
 }
 
@@ -500,18 +508,19 @@ function generateDays(){
     const customIdx=(jsDay+1)%7;
     const isToday=dateStr===todayStr;
     const isPast=dateStr<todayStr;
-    if(isFri){
-      days.push({date:dateStr,dayName:'الجمعة',dayIndex:customIdx,isFri:true,isToday,isPast,mem:null,rev:[]});
+    const isEmergency=state.skippedDates.has(dateStr);
+    if(isFri||isEmergency){
+      days.push({date:dateStr,dayName:DAY_NAMES[customIdx],dayIndex:customIdx,isFri,isToday,isPast,isEmergency,mem:null,rev:[]});
     }else{
       const m=memIdx<memQueue.length?memQueue[memIdx]:null;
       const r1=revQueue.length?revQueue[revIdx%revQueue.length]:null;
       const r2=revQueue.length?revQueue[(revIdx+1)%revQueue.length]:null;
-      days.push({date:dateStr,dayName:DAY_NAMES[customIdx],dayIndex:customIdx,isFri:false,isToday,isPast,mem:m,rev:[r1,r2].filter(Boolean)});
+      days.push({date:dateStr,dayName:DAY_NAMES[customIdx],dayIndex:customIdx,isFri:false,isToday,isPast,isEmergency:false,mem:m,rev:[r1,r2].filter(Boolean)});
       memIdx++;
       revIdx+=2;
     }
   }
-  return {days,memQueue,revQueue,totalWeeks:Math.ceil(memQueue.length/6)};
+  return {days,memQueue,revQueue,totalWeeks:Math.ceil(days.length/7)};
 }
 
 // ── Stats ──
@@ -531,7 +540,7 @@ function renderStats(pd){
 function updateProgress(pd){
   const todayStr=toDateStr(new Date());
   let done=0;
-  for(const d of pd.days)if(!d.isFri&&d.date<=todayStr)done++;
+  for(const d of pd.days)if(!d.isFri&&!d.isEmergency&&d.date<=todayStr)done++;
   const total=pd.memQueue.length;
   const pct=total?Math.min(100,Math.round((done/total)*100)):0;
   document.getElementById('prog-fill').style.width=pct+'%';
@@ -577,11 +586,18 @@ function renderWeek(){
   grid.innerHTML='';
   for(const d of weekDays){
     const card=document.createElement('div');
-    if(d.isFri){
+    if(d.isFri||d.isEmergency){
       card.className='day fri'+(d.isToday?' today':'')+(d.isPast?' past':'');
-      card.innerHTML=`
-        <div><div class="dname">الجمعة</div><div class="ddate">${d.date}</div></div>
-        <div><span class="rest-badge">🕌 راحة — استماع وتلاوة بلا حفظ جديد</span></div>`;
+      if(d.isEmergency){
+        card.innerHTML=`
+          <div><div class="dname">${d.dayName} <span class="past-badge">⚠️</span></div><div class="ddate">${d.date}</div></div>
+          <div><span class="rest-badge" style="border-color:rgba(232,116,97,.3);color:#e87461">⚠️ إجازة طارئة — لا حفظ ولا مراجعة</span>
+          ${!d.isPast?`<button class="btn-sm" onclick="toggleEmergency('${d.date}')" style="display:block;margin-top:.45rem;border-color:rgba(232,116,97,.3);color:#e87461">↩️ إلغاء الإجازة</button>`:''}</div>`;
+      }else{
+        card.innerHTML=`
+          <div><div class="dname">الجمعة</div><div class="ddate">${d.date}</div></div>
+          <div><span class="rest-badge">🕌 راحة — استماع وتلاوة بلا حفظ جديد</span></div>`;
+      }
     }else{
       card.className='day'+(d.isToday?' today':'')+(d.isPast?' past':'');
       const hHtml=d.mem
@@ -590,10 +606,12 @@ function renderWeek(){
       const mHtml=d.rev.map(r=>`<div><span class="mv">ص ${r.page}</span><span style="font-size:.7rem;color:rgba(126,200,160,.55)"> · ${r.surah}</span></div>`).join('');
       const todayTag=d.isToday?' <span class="past-badge">← اليوم</span>':'';
       const pastTag=d.isPast&&!d.isToday?' <span class="past-badge">✓</span>':'';
+      const skipBtn=!d.isPast?`<div style="grid-column:1/-1;padding-top:.15rem"><button class="btn-sm" onclick="toggleEmergency('${d.date}')">🚫 إجازة طارئة</button></div>`:'';
       card.innerHTML=`
         <div><div class="dname">${d.dayName}${todayTag}${pastTag}</div><div class="ddate">${d.date}</div></div>
         <div><div class="tlbl">حفظ جديد 📖</div><div class="tval">${hHtml}</div></div>
-        <div><div class="tlbl">مراجعة 🔄</div><div class="tval">${mHtml}</div></div>`;
+        <div><div class="tlbl">مراجعة 🔄</div><div class="tval">${mHtml}</div></div>
+        ${skipBtn}`;
     }
     grid.appendChild(card);
   }
@@ -617,6 +635,95 @@ function renderPlan(){
   updateProgress(planData);
   renderTables();
   renderWeek();
+}
+
+// ═══════════════════════════════════════════════
+//  EMERGENCY DAY-OFF
+// ═══════════════════════════════════════════════
+function toggleEmergency(dateStr){
+  if(state.skippedDates.has(dateStr)){state.skippedDates.delete(dateStr)}
+  else{state.skippedDates.add(dateStr)}
+  saveState();
+  const curWeek=Math.min(parseInt(document.getElementById('week-in').value)||1,planData.totalWeeks);
+  planData=generateDays();
+  const w=document.getElementById('week-in');
+  w.value=curWeek;w.max=planData.totalWeeks;
+  renderStats(planData);
+  updateProgress(planData);
+  renderTables();
+  renderWeek();
+}
+
+// ═══════════════════════════════════════════════
+//  EXPORT / IMPORT
+// ═══════════════════════════════════════════════
+function exportPlan(){
+  const pd=planData;
+  const data={
+    version:1,
+    type:'hifdh-plan',
+    exportedAt:toDateStr(new Date()),
+    config:{
+      memorized:[...state.memorized],
+      revision:[...state.revision],
+      startDate:state.startDate,
+      direction:state.direction,
+      skippedDates:[...state.skippedDates]
+    },
+    plan:{
+      totalPages:pd.memQueue.length,
+      totalWeeks:pd.totalWeeks,
+      days:pd.days.map(d=>({
+        date:d.date,
+        dayName:d.dayName,
+        dayIndex:d.dayIndex,
+        isFri:d.isFri,
+        isToday:d.isToday,
+        isPast:d.isPast,
+        mem:d.mem?{page:d.mem.page,surah:d.mem.surah,surahNum:d.mem.surahNum}:null,
+        rev:d.rev.map(r=>({page:r.page,surah:r.surah,surahNum:r.surahNum}))
+      }))
+    }
+  };
+  const json=JSON.stringify(data,null,2);
+  const blob=new Blob([json],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='hifdh-plan-'+state.startDate+'.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function handleImport(event){
+  const file=event.target.files[0];
+  if(!file)return;
+  if(!confirm('سيتم استبدال الخطة الحالية بالملف المستورد. هل أنت متأكد؟')){
+    event.target.value='';
+    return;
+  }
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!data.config||!data.config.memorized||!data.config.revision)throw new Error('Invalid plan file');
+      state.memorized=new Set(data.config.memorized);
+      state.revision=new Set(data.config.revision);
+      state.startDate=data.config.startDate||toDateStr(new Date());
+      state.direction=data.config.direction||'forward';
+      state.skippedDates=new Set(data.config.skippedDates||[]);
+      saveState();
+      // Regenerate and show plan
+      document.getElementById('screen-setup').classList.remove('active');
+      document.getElementById('screen-plan').classList.add('active');
+      renderPlan();
+    }catch(err){
+      alert('⚠️ خطأ في قراءة الملف. تأكد من أنه ملف خطة صحيح.');
+    }
+  };
+  reader.readAsText(file);
+  // Reset the input so the same file can be re-imported
+  event.target.value='';
 }
 
 // ═══════════════════════════════════════════════
