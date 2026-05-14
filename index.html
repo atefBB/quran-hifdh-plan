@@ -114,6 +114,9 @@ h1{font-family:'Amiri',serif;font-size:clamp(1.6rem,5vw,2.4rem);font-weight:700;
 
 footer{text-align:center;margin-top:2rem;padding-top:1.2rem;border-top:1px solid rgba(201,168,76,.08);font-size:.72rem;color:rgba(201,168,76,.25);font-family:'Amiri',serif}
 
+.report-title{font-family:'Amiri',serif;font-size:1.05rem;color:var(--gold-light);margin-bottom:.5rem;text-align:center}
+.report-title span{display:block;font-size:.78rem;color:rgba(232,201,122,.45);font-family:'Cairo',sans-serif;margin-top:.15rem}
+
 @media(max-width:580px){
 .day{grid-template-columns:1fr;gap:.35rem;padding:.65rem .75rem}
 .day.fri{grid-template-columns:1fr}
@@ -216,11 +219,65 @@ footer{text-align:center;margin-top:2rem;padding-top:1.2rem;border-top:1px solid
     <button onclick="showSetup()">✏️ تعديل الخطة</button>
     <button onclick="exportPlan()">📥 تصدير كـ JSON</button>
     <button onclick="document.getElementById('import-input').click()">📤 استيراد من JSON</button>
-    <button class="btn-danger" onclick="resetAll()">🗑️ حذف البيانات</button>
+    <button onclick="showReports()">📊 التقارير</button>
+  <button class="btn-danger" onclick="resetAll()">🗑️ حذف البيانات</button>
   </div>
   <footer>اللَّهُمَّ اجْعَلِ الْقُرْآنَ رَبِيعَ قُلُوبِنَا وَنُورَ صُدُورِنَا</footer>
 </div>
 
+<!-- ════════ REPORTS SCREEN ════════ -->
+<div id="screen-reports" class="screen">
+  <div class="sec-title">📊 التقارير</div>
+  
+  <div class="setup-card">
+    <h2>نوع التقرير</h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label>الفترة</label>
+        <select id="report-type" onchange="toggleReportType()">
+          <option value="weekly">أسبوعي</option>
+          <option value="monthly">شهري</option>
+          <option value="custom">فترة مخصصة</option>
+        </select>
+      </div>
+      <div class="form-group" id="report-week-group">
+        <label>رقم الأسبوع</label>
+        <input type="number" id="report-week" value="1" min="1">
+      </div>
+      <div class="form-group" id="report-month-group" style="display:none">
+        <label>رقم الشهر</label>
+        <input type="number" id="report-month" value="1" min="1">
+      </div>
+      <div class="form-group" id="report-from-group" style="display:none">
+        <label>من تاريخ</label>
+        <input type="date" id="report-from">
+      </div>
+      <div class="form-group" id="report-to-group" style="display:none">
+        <label>إلى تاريخ</label>
+        <input type="date" id="report-to">
+      </div>
+    </div>
+    <button class="btn-primary" onclick="generateReport()">📊 إنشاء التقرير</button>
+  </div>
+  
+  <div id="report-results" style="display:none">
+    <div class="report-title" id="report-period-title"></div>
+    <div class="stats" id="report-stats"></div>
+    <div class="prog-box">
+      <div class="prog-header">
+        <span>📈 التقدم العام في الخطة</span>
+        <span class="pct" id="report-pct-label">0%</span>
+      </div>
+      <div class="prog-track"><div class="prog-fill" id="report-prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="sec-title">تفاصيل الأيام</div>
+    <div class="days" id="report-days"></div>
+  </div>
+  
+  <div class="actions">
+    <button onclick="showPlanFromReports()">↩️ العودة إلى الخطة</button>
+  </div>
+  <footer>اللَّهُمَّ اجْعَلِ الْقُرْآنَ رَبِيعَ قُلُوبِنَا وَنُورَ صُدُورِنَا</footer>
 </div>
 
 <input type="file" id="import-input" accept=".json" style="display:none" onchange="handleImport(event)">
@@ -724,6 +781,128 @@ function handleImport(event){
   reader.readAsText(file);
   // Reset the input so the same file can be re-imported
   event.target.value='';
+}
+
+// ═══════════════════════════════════════════════
+//  REPORTS
+// ═══════════════════════════════════════════════
+function showReports(){
+  document.getElementById('screen-plan').classList.remove('active');
+  document.getElementById('screen-reports').classList.add('active');
+  
+  const totalWeeks=planData.totalWeeks;
+  const totalMonths=Math.max(1,Math.ceil(totalWeeks/4.33));
+  
+  const weekInp=document.getElementById('report-week');
+  weekInp.max=totalWeeks;
+  const curWeek=parseInt(document.getElementById('week-in').value)||1;
+  weekInp.value=Math.min(curWeek,totalWeeks);
+  
+  const monthInp=document.getElementById('report-month');
+  monthInp.max=totalMonths;
+  
+  document.getElementById('report-results').style.display='none';
+}
+
+function showPlanFromReports(){
+  document.getElementById('screen-reports').classList.remove('active');
+  document.getElementById('screen-plan').classList.add('active');
+  renderWeek();
+}
+
+function toggleReportType(){
+  const type=document.getElementById('report-type').value;
+  document.getElementById('report-week-group').style.display=type==='weekly'?'':'none';
+  document.getElementById('report-month-group').style.display=type==='monthly'?'':'none';
+  document.getElementById('report-from-group').style.display=type==='custom'?'':'none';
+  document.getElementById('report-to-group').style.display=type==='custom'?'':'none';
+  
+  if(type==='custom'&&planData.days.length){
+    document.getElementById('report-from').value=planData.days[0].date;
+    document.getElementById('report-to').value=planData.days[planData.days.length-1].date;
+  }
+}
+
+function generateReport(){
+  const type=document.getElementById('report-type').value;
+  let periodDays=[];
+  let periodTitle='';
+  
+  if(type==='weekly'){
+    const week=Math.min(planData.totalWeeks,Math.max(1,parseInt(document.getElementById('report-week').value)||1));
+    document.getElementById('report-week').value=week;
+    const idx0=(week-1)*7;
+    periodDays=planData.days.slice(idx0,idx0+7);
+    periodTitle=`تقرير الأسبوع ${week} من ${planData.totalWeeks}`;
+  }else if(type==='monthly'){
+    const totalMonths=Math.max(1,Math.ceil(planData.totalWeeks/4.33));
+    const month=Math.min(totalMonths,Math.max(1,parseInt(document.getElementById('report-month').value)||1));
+    document.getElementById('report-month').value=month;
+    const idx0=(month-1)*30;
+    periodDays=planData.days.slice(idx0,idx0+30);
+    const firstD=periodDays[0],lastD=periodDays[periodDays.length-1];
+    periodTitle=`تقرير الشهر ${month} من ${totalMonths}`;
+    if(firstD&&lastD)periodTitle+=`<span>${firstD.date} — ${lastD.date}</span>`;
+  }else{
+    const from=document.getElementById('report-from').value;
+    const to=document.getElementById('report-to').value;
+    if(!from||!to){alert('⚠️ الرجاء اختيار تاريخ البداية والنهاية.');return}
+    periodDays=planData.days.filter(d=>d.date>=from&&d.date<=to);
+    periodTitle=`تقرير من ${from} إلى ${to}`;
+  }
+  
+  if(!periodDays.length){alert('⚠️ لا توجد أيام في هذه الفترة.');return}
+  
+  const studyDays=periodDays.filter(d=>!d.isFri&&!d.isEmergency);
+  const memCount=studyDays.filter(d=>d.mem!==null).length;
+  const revCount=studyDays.reduce((s,d)=>s+(d.rev?d.rev.length:0),0);
+  const totalPages=memCount+revCount;
+  const fridays=periodDays.filter(d=>d.isFri).length;
+  const emergencies=periodDays.filter(d=>d.isEmergency).length;
+  const avg=studyDays.length?((totalPages/studyDays.length).toFixed(1)):'0';
+  
+  const todayStr=toDateStr(new Date());
+  const doneSoFar=planData.days.filter(d=>!d.isFri&&!d.isEmergency&&d.date<=todayStr).length;
+  const totalPlanPages=planData.memQueue.length;
+  const pct=totalPlanPages?Math.min(100,Math.round((doneSoFar/totalPlanPages)*100)):0;
+  
+  document.getElementById('report-period-title').innerHTML=periodTitle;
+  document.getElementById('report-stats').innerHTML=`
+    <div class="stat"><div class="stat-icon">📖</div><div class="stat-val">${memCount}</div><div class="stat-lbl">صفحة حفظ</div></div>
+    <div class="stat"><div class="stat-icon">🔄</div><div class="stat-val">${revCount}</div><div class="stat-lbl">صفحة مراجعة</div></div>
+    <div class="stat"><div class="stat-icon">📚</div><div class="stat-val">${totalPages}</div><div class="stat-lbl">إجمالي الصفحات</div></div>
+    <div class="stat"><div class="stat-icon">📆</div><div class="stat-val">${studyDays.length}</div><div class="stat-lbl">أيام عمل</div></div>
+    <div class="stat"><div class="stat-icon">🕌</div><div class="stat-val">${fridays}</div><div class="stat-lbl">الجمعة</div></div>
+    <div class="stat"><div class="stat-icon">⚠️</div><div class="stat-val">${emergencies}</div><div class="stat-lbl">إجازات طارئة</div></div>
+    <div class="stat"><div class="stat-icon">📊</div><div class="stat-val">${avg}</div><div class="stat-lbl">معدل/يوم</div></div>
+  `;
+  document.getElementById('report-prog-fill').style.width=pct+'%';
+  document.getElementById('report-pct-label').textContent=pct+'%';
+  
+  const grid=document.getElementById('report-days');
+  grid.innerHTML='';
+  for(const d of periodDays){
+    const card=document.createElement('div');
+    if(d.isFri||d.isEmergency){
+      card.className='day fri';
+      if(d.isEmergency){
+        card.innerHTML=`<div><div class="dname">${d.dayName}</div><div class="ddate">${d.date}</div></div><div><span class="rest-badge" style="border-color:rgba(232,116,97,.3);color:#e87461">⚠️ إجازة طارئة</span></div>`;
+      }else{
+        card.innerHTML=`<div><div class="dname">الجمعة</div><div class="ddate">${d.date}</div></div><div><span class="rest-badge">🕌 راحة أسبوعية</span></div>`;
+      }
+    }else{
+      card.className='day';
+      const hHtml=d.mem
+        ?`<span class="hv">ص ${d.mem.page}</span><span style="font-size:.72rem;color:rgba(232,201,122,.5)"> · ${d.mem.surah}</span>`
+        :`<span style="opacity:.38;font-size:.75rem">—</span>`;
+      const mHtml=d.rev.map(r=>`<div><span class="mv">ص ${r.page}</span><span style="font-size:.7rem;color:rgba(126,200,160,.55)"> · ${r.surah}</span></div>`).join('');
+      card.innerHTML=`<div><div class="dname">${d.dayName}</div><div class="ddate">${d.date}</div></div><div><div class="tlbl">حفظ 📖</div><div class="tval">${hHtml}</div></div><div><div class="tlbl">مراجعة 🔄</div><div class="tval">${mHtml}</div></div>`;
+    }
+    grid.appendChild(card);
+  }
+  
+  document.getElementById('report-results').style.display='block';
+  document.getElementById('report-results').scrollIntoView({behavior:'smooth'});
 }
 
 // ═══════════════════════════════════════════════
