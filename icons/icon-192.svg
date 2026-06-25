@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0d3320"/>
+      <stop offset="100%" stop-color="#1a5c3a"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#c9a84c"/>
+      <stop offset="100%" stop-color="#e8c97a"/>
+    </linearGradient>
+    <linearGradient id="page" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#faf6ed"/>
+      <stop offset="100%" stop-color="#f0e8d0"/>
+    </linearGradient>
+  </defs>
+  <!-- Background circle -->
+  <circle cx="96" cy="96" r="92" fill="url(#bg)" stroke="url(#gold)" stroke-width="3"/>
+  <!-- Open book -->
+  <g transform="translate(26, 52)">
+    <!-- Left page -->
+    <path d="M70 0 Q35 5 0 10 L0 74 Q35 68 70 64 Z" fill="url(#page)" opacity="0.95"/>
+    <!-- Right page -->
+    <path d="M70 0 Q105 5 140 10 L140 74 Q105 68 70 64 Z" fill="url(#page)" opacity="0.95"/>
+    <!-- Spine -->
+    <rect x="66" y="2" width="8" height="62" rx="2" fill="url(#gold)"/>
+    <!-- Text lines left -->
+    <g fill="#8a6a1f" opacity="0.4">
+      <rect x="12" y="18" width="48" height="2" rx="1"/>
+      <rect x="14" y="26" width="44" height="2" rx="1"/>
+      <rect x="12" y="34" width="48" height="2" rx="1"/>
+      <rect x="15" y="42" width="42" height="2" rx="1"/>
+      <rect x="13" y="50" width="46" height="2" rx="1"/>
+    </g>
+    <!-- Text lines right -->
+    <g fill="#8a6a1f" opacity="0.4">
+      <rect x="90" y="18" width="48" height="2" rx="1"/>
+      <rect x="92" y="26" width="44" height="2" rx="1"/>
+      <rect x="90" y="34" width="48" height="2" rx="1"/>
+      <rect x="93" y="42" width="42" height="2" rx="1"/>
+      <rect x="91" y="50" width="46" height="2" rx="1"/>
+    </g>
+    <!-- Bookmark -->
+    <path d="M66 4 L70 12 L74 4" fill="url(#gold)"/>
+  </g>
+  <!-- Crescent moon -->
+  <g transform="translate(128, 32)">
+    <circle cx="0" cy="0" r="16" fill="url(#gold)"/>
+    <circle cx="6" cy="-4" r="13" fill="url(#bg)"/>
+  </g>
+  <!-- Small star -->
+  <circle cx="138" cy="24" r="2" fill="#e8c97a" opacity="0.7"/>
+  <circle cx="146" cy="36" r="1.5" fill="#e8c97a" opacity="0.5"/>
+</svg>

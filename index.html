@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#c9a84c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="حفظ القرآن">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/svg+xml" href="/icons/icon-512.svg">
+<link rel="apple-touch-icon" href="/icons/icon-512.svg">
 <title>خطة حفظ القرآن الكريم</title>
 <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
@@ -1067,6 +1075,57 @@ function generateReport(){
 //  INIT
 // ═══════════════════════════════════════════════
 initSetup();
+
+// ═══════════════════════════════════════════════
+//  PWA — INSTALL PROMPT & SERVICE WORKER
+// ═══════════════════════════════════════════════
+let deferredPrompt = null;
+
+// Capture the beforeinstallprompt event so we can show our own install button
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  showInstallButton();
+});
+
+function showInstallButton() {
+  // Remove old install button if it exists
+  const old = document.getElementById('pwa-install-btn');
+  if (old) old.remove();
+
+  const btn = document.createElement('button');
+  btn.id = 'pwa-install-btn';
+  btn.innerHTML = '📲 تثبيت التطبيق';
+  btn.style.cssText = 'position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);z-index:999;background:linear-gradient(135deg,#8a6a1f,#c9a84c);color:#1a1208;border:none;border-radius:10px;padding:.55rem 1.2rem;font-family:"Cairo",sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;box-shadow:0 4px 20px rgba(201,168,76,.3);transition:.2s;display:flex;align-items:center;gap:.4rem;animation:pwaFadeIn .3s ease';
+  btn.onmouseenter = () => { btn.style.transform = 'translateX(-50%) translateY(-2px)'; btn.style.boxShadow = '0 6px 28px rgba(201,168,76,.45)'; };
+  btn.onmouseleave = () => { btn.style.transform = 'translateX(-50%)'; btn.style.boxShadow = '0 4px 20px rgba(201,168,76,.3)'; };
+  btn.onclick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const result = await deferredPrompt.userChoice;
+    if (result.outcome === 'accepted') btn.remove();
+    deferredPrompt = null;
+  };
+  document.body.appendChild(btn);
+}
+
+// Register service worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').then(
+      (reg) => console.log('✅ SW registered, scope:', reg.scope),
+      (err) => console.log('❌ SW registration failed:', err)
+    );
+  });
+}
+
+// Also listen for the app being installed (hide the button)
+window.addEventListener('appinstalled', () => {
+  const btn = document.getElementById('pwa-install-btn');
+  if (btn) btn.remove();
+  deferredPrompt = null;
+  console.log('✅ App installed');
+});
 </script>
 </body>
 </html>
