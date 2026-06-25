@@ -6,11 +6,11 @@ const CACHE_NAME = 'quran-hifdh-plan-v1';
 
 // Resources to pre-cache on install
 const PRECACHE_URLS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icons/icon-192.svg',
-  '/icons/icon-512.svg'
+  '.',
+  'index.html',
+  'manifest.json',
+  'icons/icon-192.svg',
+  'icons/icon-512.svg'
 ];
 
 // ── Install ──
@@ -81,7 +81,7 @@ self.addEventListener('fetch', event => {
       }).catch(() => {
         // Offline fallback — return the index page for navigation requests
         if (event.request.mode === 'navigate') {
-          return caches.match('/index.html');
+          return caches.match('index.html');
         }
         return new Response('Offline', { status: 503 });
       });

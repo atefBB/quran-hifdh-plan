@@ -8,9 +8,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="حفظ القرآن">
 <meta name="mobile-web-app-capable" content="yes">
-<link rel="manifest" href="/manifest.json">
-<link rel="icon" type="image/svg+xml" href="/icons/icon-512.svg">
-<link rel="apple-touch-icon" href="/icons/icon-512.svg">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="icons/icon-512.svg">
+<link rel="apple-touch-icon" href="icons/icon-512.svg">
 <title>خطة حفظ القرآن الكريم</title>
 <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
@@ -1112,7 +1112,7 @@ function showInstallButton() {
 // Register service worker
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').then(
+    navigator.serviceWorker.register('sw.js').then(
       (reg) => console.log('✅ SW registered, scope:', reg.scope),
       (err) => console.log('❌ SW registration failed:', err)
     );
