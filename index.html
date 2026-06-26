@@ -141,6 +141,10 @@ footer{text-align:center;margin-top:2rem;padding-top:1.2rem;border-top:1px solid
 .day.fri{grid-template-columns:1fr}
 .stats{grid-template-columns:repeat(2,1fr)}
 .surah-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr))}
+.day .btn-sm{padding:.25rem .5rem;font-size:.68rem}
+}
+@media(max-width:400px){
+.day .btn-sm{flex:1 1 100%}
 }
 </style>
 </head>
@@ -805,7 +809,7 @@ function renderWeek(){
         <div><div class="dname">${d.dayName}${todayTag}${pastTag}</div><div class="ddate">${d.date}</div></div>
         <div style="grid-column:1/-1"><span class="mem-skip-badge">📖 تخطي الحفظ — مراجعة فقط</span></div>
         <div style="grid-column:1/-1"><div class="tlbl">مراجعة 🔄</div><div class="tval">${mHtml||'<span style="opacity:.38;font-size:.75rem">—</span>'}</div></div>
-        <div style="grid-column:1/-1;padding-top:.15rem;display:flex;gap:.35rem">
+        <div style="grid-column:1/-1;padding-top:.15rem;display:flex;gap:.35rem;flex-wrap:wrap">
           <button class="btn-sm" onclick="toggleMemSkip('${d.date}')">↩️ إلغاء تخطي الحفظ</button>
           <button class="btn-sm" onclick="toggleEmergency('${d.date}')">🚫 إجازة طارئة</button>
         </div>`;
@@ -831,7 +835,7 @@ function renderWeek(){
       const pastTag=d.isPast&&!d.isToday?' <span class="past-badge">✓</span>':'';
       const memSkipBtn=`<button class="btn-sm" onclick="toggleMemSkip('${d.date}')">📖 تخطي الحفظ</button>`;
       const emergencyBtn=`<button class="btn-sm" onclick="toggleEmergency('${d.date}')">🚫 إجازة طارئة</button>`;
-      const actionBtns=`<div style="grid-column:1/-1;padding-top:.15rem;display:flex;gap:.35rem">${memSkipBtn}${emergencyBtn}</div>`;
+      const actionBtns=`<div style="grid-column:1/-1;padding-top:.15rem;display:flex;gap:.35rem;flex-wrap:wrap">${memSkipBtn}${emergencyBtn}</div>`;
       card.innerHTML=`
         <div><div class="dname">${d.dayName}${todayTag}${pastTag}</div><div class="ddate">${d.date}</div></div>
         <div><div class="tlbl">حفظ جديد 📖</div><div class="tval">${hHtml}</div></div>
