@@ -14,6 +14,7 @@ A general-purpose web application for planning and tracking Quran memorization (
 - **Ramadan Mode** — Set Ramadan dates; days become revision-only (no new memorization), including Fridays
 - **Eid Vacations** — Set vacation dates for Eid al-Fitr and Eid al-Adha (7 full days off each)
 - **Emergency Day-Off** — Mark any day (past or future) as an emergency vacation to skip it
+- **Memorization Skip** — Skip new memorization on any day while continuing your revision
 - **Export/Import Plan** — Save your plan as a JSON file and restore it anytime
 - **Progress Reports** — View weekly, monthly, or custom-period reports with memorization statistics and progress tracking
 - **Auto-Current Week** — Automatically opens to the week containing today's date
@@ -46,6 +47,17 @@ If you miss a day (past or future), click the **"🚫 إجازة طارئة"** (
 - Works on **past, current, and future** dates
 - Click **"↩️ إلغاء الإجازة"** to undo and restore the day
 - Marked days show a ⚠️ badge and are excluded from progress calculations
+
+## Memorization Skip
+
+If you want to skip new memorization on a specific day but still do your revision, click the **"📖 تخطي الحفظ"** (Skip Memorization) button on any day in your plan. The day will keep its revision pages but skip the new memorization page.
+
+- Works on **past, current, and future** dates
+- Revision continues as normal (2 pages/day cycle)
+- The memorization page is deferred to the next available day (not lost)
+- Click **"↩️ إلغاء تخطي الحفظ"** to undo and restore the memorization page
+- Mutually exclusive with **Emergency Day-Off** — setting one clears the other
+- Days show a "📖 تخطي الحفظ — مراجعة فقط" badge
 
 ## Ramadan (Revision-Only Mode)
 
