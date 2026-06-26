@@ -132,6 +132,9 @@ footer{text-align:center;margin-top:2rem;padding-top:1.2rem;border-top:1px solid
 .day.eid-vac:hover{background:rgba(201,168,76,.14)}
 .ramadan-badge{display:inline-block;background:rgba(45,138,88,.2);border:1px solid rgba(126,200,160,.3);border-radius:20px;padding:.1rem .55rem;font-size:.68rem;color:#7ec8a0}
 .eid-badge{display:inline-block;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.25);border-radius:20px;padding:.1rem .55rem;font-size:.68rem;color:var(--gold-light)}
+.mem-skip-badge{display:inline-block;background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.18);border-radius:20px;padding:.1rem .55rem;font-size:.68rem;color:var(--gold-light)}
+.day.mem-skip{background:rgba(201,168,76,.04);border-color:rgba(201,168,76,.18)}
+.day.mem-skip:hover{background:rgba(201,168,76,.08)}
 
 @media(max-width:580px){
 .day{grid-template-columns:1fr;gap:.35rem;padding:.65rem .75rem}
@@ -462,6 +465,7 @@ let state = {
   startDate: null,
   direction: 'forward',
   skippedDates: new Set(),
+  memSkipDates: new Set(),
   ramadanStart: null,
   ramadanEnd: null,
   eidAlFitrStart: null,
@@ -470,21 +474,21 @@ let state = {
 };
 
 function saveState(){
-  const d = {memorized:[...state.memorized],revision:[...state.revision],startDate:state.startDate,direction:state.direction,skippedDates:[...state.skippedDates],ramadanStart:state.ramadanStart,ramadanEnd:state.ramadanEnd,eidAlFitrStart:state.eidAlFitrStart,eidAlAdhaStart:state.eidAlAdhaStart,eidVacationDays:state.eidVacationDays};
+  const d = {memorized:[...state.memorized],revision:[...state.revision],startDate:state.startDate,direction:state.direction,skippedDates:[...state.skippedDates],memSkipDates:[...state.memSkipDates],ramadanStart:state.ramadanStart,ramadanEnd:state.ramadanEnd,eidAlFitrStart:state.eidAlFitrStart,eidAlAdhaStart:state.eidAlAdhaStart,eidVacationDays:state.eidVacationDays};
   try{localStorage.setItem('hifdh-plan',JSON.stringify(d))}catch(e){}
 }
 
 function loadState(){
   try{
     const raw=localStorage.getItem('hifdh-plan');
-    if(raw){const d=JSON.parse(raw);state.memorized=new Set(d.memorized);state.revision=new Set(d.revision);state.startDate=d.startDate;state.direction=d.direction||'forward';state.skippedDates=new Set(d.skippedDates||[]);state.ramadanStart=d.ramadanStart||null;state.ramadanEnd=d.ramadanEnd||null;state.eidAlFitrStart=d.eidAlFitrStart||null;state.eidAlAdhaStart=d.eidAlAdhaStart||null;state.eidVacationDays=d.eidVacationDays||7}
+    if(raw){const d=JSON.parse(raw);state.memorized=new Set(d.memorized);state.revision=new Set(d.revision);state.startDate=d.startDate;state.direction=d.direction||'forward';state.skippedDates=new Set(d.skippedDates||[]);state.memSkipDates=new Set(d.memSkipDates||[]);state.ramadanStart=d.ramadanStart||null;state.ramadanEnd=d.ramadanEnd||null;state.eidAlFitrStart=d.eidAlFitrStart||null;state.eidAlAdhaStart=d.eidAlAdhaStart||null;state.eidVacationDays=d.eidVacationDays||7}
   }catch(e){}
 }
 
 function resetAll(){
   if(!confirm('سيتم حذف جميع البيانات. هل أنت متأكد؟'))return;
   localStorage.removeItem('hifdh-plan');
-  state={memorized:new Set(),revision:new Set(),startDate:null,direction:'forward',skippedDates:new Set(),ramadanStart:null,ramadanEnd:null,eidAlFitrStart:null,eidAlAdhaStart:null,eidVacationDays:7};
+  state={memorized:new Set(),revision:new Set(),startDate:null,direction:'forward',skippedDates:new Set(),memSkipDates:new Set(),ramadanStart:null,ramadanEnd:null,eidAlFitrStart:null,eidAlAdhaStart:null,eidVacationDays:7};
   initSetup();
 }
 
@@ -660,6 +664,9 @@ function generateDays(){
 
   // Build set of dates that fall in Eid vacations (full break)
   const eidDates=new Set();
+
+  // Set of dates where memorization is skipped but revision still happens
+  const memSkipDates=new Set(state.memSkipDates);
   if(state.eidAlFitrStart){
     const es=new Date(state.eidAlFitrStart+'T12:00:00');
     for(let i=0;i<state.eidVacationDays;i++){const ed=new Date(es);ed.setDate(ed.getDate()+i);eidDates.add(toDateStr(ed))}
@@ -680,10 +687,17 @@ function generateDays(){
     const isEmergency=state.skippedDates.has(dateStr);
     const isRamadan=!isEmergency&&ramadanDates.has(dateStr);
     const isEidVacation=!isEmergency&&eidDates.has(dateStr);
+    const isMemSkip=!isEmergency&&!isEidVacation&&!isRamadan&&memSkipDates.has(dateStr);
 
     if(isEidVacation){
       // Eid vacation: full break, no mem + no rev (unless manually marked emergency)
       days.push({date:dateStr,dayName:DAY_NAMES[customIdx],dayIndex:customIdx,isFri:false,isToday,isPast,isEmergency:false,isRamadan:false,isEidVacation:true,mem:null,rev:[]});
+    }else if(isMemSkip){
+      // Memorization skip: no new memorization, but revision continues
+      const r1=revQueue.length?revQueue[revIdx%revQueue.length]:null;
+      const r2=revQueue.length?revQueue[(revIdx+1)%revQueue.length]:null;
+      days.push({date:dateStr,dayName:DAY_NAMES[customIdx],dayIndex:customIdx,isFri:false,isToday,isPast,isEmergency:false,isRamadan:false,isEidVacation:false,isMemSkip:true,mem:null,rev:[r1,r2].filter(Boolean)});
+      revIdx+=2;
     }else if(isEmergency||isFri&&!isRamadan){
       // Normal Friday rest or manual emergency day-off
       days.push({date:dateStr,dayName:DAY_NAMES[customIdx],dayIndex:customIdx,isFri,isToday,isPast,isEmergency,isRamadan:false,isEidVacation:false,mem:null,rev:[]});
@@ -768,22 +782,34 @@ function renderWeek(){
   const grid=document.getElementById('days');
   grid.innerHTML='';
   for(const d of weekDays){
-    const card=document.createElement('div');
-    if(d.isEidVacation){
-      card.className='day eid-vac'+(d.isToday?' today':'')+(d.isPast?' past':'');
-      card.innerHTML=`
+    const card=document.createElement('div');      if(d.isEidVacation){
+        card.className='day eid-vac'+(d.isToday?' today':'')+(d.isPast?' past':'');
+        card.innerHTML=`
         <div><div class="dname">${d.dayName} <span class="eid-badge">🎉 عيد</span></div><div class="ddate">${d.date}</div></div>
         <div><span class="eid-badge">🎉 إجازة عيد — لا حفظ ولا مراجعة</span></div>`;
-    }else if(d.isRamadan){
-      card.className='day ramadan'+(d.isToday?' today':'')+(d.isPast?' past':'');
-      const mHtml=d.rev.map(r=>`<div><span class="mv">ص ${r.page}</span><span style="font-size:.7rem;color:rgba(126,200,160,.55)"> · ${r.surah}</span></div>`).join('');
-      const todayTag=d.isToday?' <span class="past-badge">← اليوم</span>':'';
-      const pastTag=d.isPast&&!d.isToday?' <span class="past-badge">✓</span>':'';
-      card.innerHTML=`
+      }else if(d.isRamadan){
+        card.className='day ramadan'+(d.isToday?' today':'')+(d.isPast?' past':'');
+        const mHtml=d.rev.map(r=>`<div><span class="mv">ص ${r.page}</span><span style="font-size:.7rem;color:rgba(126,200,160,.55)"> · ${r.surah}</span></div>`).join('');
+        const todayTag=d.isToday?' <span class="past-badge">← اليوم</span>':'';
+        const pastTag=d.isPast&&!d.isToday?' <span class="past-badge">✓</span>':'';
+        card.innerHTML=`
         <div><div class="dname">${d.dayName} ${todayTag}${pastTag}</div><div class="ddate">${d.date}</div></div>
         <div style="grid-column:1/-1"><span class="ramadan-badge">🌙 رمضان — مراجعة فقط</span></div>
         <div style="grid-column:1/-1"><div class="tlbl">مراجعة 🔄</div><div class="tval">${mHtml||'<span style="opacity:.38;font-size:.75rem">—</span>'}</div></div>`;
-    }else if(d.isFri||d.isEmergency){
+      }else if(d.isMemSkip){
+        card.className='day mem-skip'+(d.isToday?' today':'')+(d.isPast?' past':'');
+        const mHtml=d.rev.map(r=>`<div><span class="mv">ص ${r.page}</span><span style="font-size:.7rem;color:rgba(126,200,160,.55)"> · ${r.surah}</span></div>`).join('');
+        const todayTag=d.isToday?' <span class="past-badge">← اليوم</span>':'';
+        const pastTag=d.isPast&&!d.isToday?' <span class="past-badge">✓</span>':'';
+        card.innerHTML=`
+        <div><div class="dname">${d.dayName}${todayTag}${pastTag}</div><div class="ddate">${d.date}</div></div>
+        <div style="grid-column:1/-1"><span class="mem-skip-badge">📖 تخطي الحفظ — مراجعة فقط</span></div>
+        <div style="grid-column:1/-1"><div class="tlbl">مراجعة 🔄</div><div class="tval">${mHtml||'<span style="opacity:.38;font-size:.75rem">—</span>'}</div></div>
+        <div style="grid-column:1/-1;padding-top:.15rem;display:flex;gap:.35rem">
+          <button class="btn-sm" onclick="toggleMemSkip('${d.date}')">↩️ إلغاء تخطي الحفظ</button>
+          <button class="btn-sm" onclick="toggleEmergency('${d.date}')">🚫 إجازة طارئة</button>
+        </div>`;
+      }else if(d.isFri||d.isEmergency){
       card.className='day fri'+(d.isToday?' today':'')+(d.isPast?' past':'');
       if(d.isEmergency){
         card.innerHTML=`
@@ -803,12 +829,14 @@ function renderWeek(){
       const mHtml=d.rev.map(r=>`<div><span class="mv">ص ${r.page}</span><span style="font-size:.7rem;color:rgba(126,200,160,.55)"> · ${r.surah}</span></div>`).join('');
       const todayTag=d.isToday?' <span class="past-badge">← اليوم</span>':'';
       const pastTag=d.isPast&&!d.isToday?' <span class="past-badge">✓</span>':'';
-      const skipBtn=`<div style="grid-column:1/-1;padding-top:.15rem"><button class="btn-sm" onclick="toggleEmergency('${d.date}')">${d.isEmergency?'↩️ إلغاء الإجازة':'🚫 إجازة طارئة'}</button></div>`;
+      const memSkipBtn=`<button class="btn-sm" onclick="toggleMemSkip('${d.date}')">📖 تخطي الحفظ</button>`;
+      const emergencyBtn=`<button class="btn-sm" onclick="toggleEmergency('${d.date}')">🚫 إجازة طارئة</button>`;
+      const actionBtns=`<div style="grid-column:1/-1;padding-top:.15rem;display:flex;gap:.35rem">${memSkipBtn}${emergencyBtn}</div>`;
       card.innerHTML=`
         <div><div class="dname">${d.dayName}${todayTag}${pastTag}</div><div class="ddate">${d.date}</div></div>
         <div><div class="tlbl">حفظ جديد 📖</div><div class="tval">${hHtml}</div></div>
         <div><div class="tlbl">مراجعة 🔄</div><div class="tval">${mHtml}</div></div>
-        ${skipBtn}`;
+        ${actionBtns}`;
     }
     grid.appendChild(card);
   }
@@ -843,7 +871,29 @@ function renderPlan(){
 // ═══════════════════════════════════════════════
 function toggleEmergency(dateStr){
   if(state.skippedDates.has(dateStr)){state.skippedDates.delete(dateStr)}
-  else{state.skippedDates.add(dateStr)}
+  else{
+    state.skippedDates.add(dateStr);
+    // Clear mem-skip if set, since emergency is a full break
+    if(state.memSkipDates.has(dateStr)) state.memSkipDates.delete(dateStr);
+  }
+  saveState();
+  const curWeek=Math.min(parseInt(document.getElementById('week-in').value)||1,planData.totalWeeks);
+  planData=generateDays();
+  const w=document.getElementById('week-in');
+  w.value=curWeek;w.max=planData.totalWeeks;
+  renderStats(planData);
+  updateProgress(planData);
+  renderTables();
+  renderWeek();
+}
+
+function toggleMemSkip(dateStr){
+  if(state.memSkipDates.has(dateStr)){state.memSkipDates.delete(dateStr)}
+  else{
+    state.memSkipDates.add(dateStr);
+    // Clear full emergency if set, since mem-skip is more specific
+    if(state.skippedDates.has(dateStr)) state.skippedDates.delete(dateStr);
+  }
   saveState();
   const curWeek=Math.min(parseInt(document.getElementById('week-in').value)||1,planData.totalWeeks);
   planData=generateDays();
@@ -870,6 +920,7 @@ function exportPlan(){
       startDate:state.startDate,
       direction:state.direction,
       skippedDates:[...state.skippedDates],
+      memSkipDates:[...state.memSkipDates],
       ramadanStart:state.ramadanStart,
       ramadanEnd:state.ramadanEnd,
       eidAlFitrStart:state.eidAlFitrStart,
@@ -889,7 +940,8 @@ function exportPlan(){
         mem:d.mem?{page:d.mem.page,surah:d.mem.surah,surahNum:d.mem.surahNum}:null,
         rev:d.rev.map(r=>({page:r.page,surah:r.surah,surahNum:r.surahNum})),
         isRamadan:d.isRamadan||false,
-        isEidVacation:d.isEidVacation||false
+        isEidVacation:d.isEidVacation||false,
+        isMemSkip:d.isMemSkip||false
       }))
     }
   };
@@ -920,6 +972,7 @@ function handleImport(event){
       state.startDate=data.config.startDate||toDateStr(new Date());
       state.direction=data.config.direction||'forward';
       state.skippedDates=new Set(data.config.skippedDates||[]);
+      state.memSkipDates=new Set(data.config.memSkipDates||[]);
       state.ramadanStart=data.config.ramadanStart||null;
       state.ramadanEnd=data.config.ramadanEnd||null;
       state.eidAlFitrStart=data.config.eidAlFitrStart||null;
@@ -1049,6 +1102,10 @@ function generateReport(){
         card.className='day ramadan';
         const mHtml=d.rev.map(r=>`<div><span class="mv">ص ${r.page}</span><span style="font-size:.7rem;color:rgba(126,200,160,.55)"> · ${r.surah}</span></div>`).join('');
         card.innerHTML=`<div><div class="dname">${d.dayName}</div><div class="ddate">${d.date}</div></div><div><span class="ramadan-badge">🌙 رمضان — مراجعة فقط</span></div><div><div class="tlbl">مراجعة 🔄</div><div class="tval">${mHtml||'<span style="opacity:.38">—</span>'}</div></div>`;
+      }else if(d.isMemSkip){
+        card.className='day mem-skip';
+        const mHtml=d.rev.map(r=>`<div><span class="mv">ص ${r.page}</span><span style="font-size:.7rem;color:rgba(126,200,160,.55)"> · ${r.surah}</span></div>`).join('');
+        card.innerHTML=`<div><div class="dname">${d.dayName}</div><div class="ddate">${d.date}</div></div><div><span class="mem-skip-badge">📖 تخطي الحفظ — مراجعة فقط</span></div><div><div class="tlbl">مراجعة 🔄</div><div class="tval">${mHtml||'<span style="opacity:.38">—</span>'}</div></div>`;
       }else if(d.isFri||d.isEmergency){
         card.className='day fri';
         if(d.isEmergency){
